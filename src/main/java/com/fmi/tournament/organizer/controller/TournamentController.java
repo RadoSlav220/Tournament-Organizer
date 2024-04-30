@@ -1,4 +1,4 @@
-package controller;
+package com.fmi.tournament.organizer.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
