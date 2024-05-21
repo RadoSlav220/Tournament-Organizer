@@ -31,26 +31,31 @@ public class TeamService {
     return teamRepository.save(team);
   }
 
-  public Optional<Team> updateTeamById(UUID id, TeamDTO newTeam) {
+  public Optional<Team> updateTeamById(UUID id, TeamDTO updatedTeamDetails) {
     Optional<Team> oldTeam = teamRepository.findById(id);
-
-    if (oldTeam.isPresent()) {
-      Team updateTeam = oldTeam.get();
-
-      updateTeam.setName(newTeam.getName());
-      updateTeam.setSportType(newTeam.getSportType());
-      updateTeam.setYear(newTeam.getYear());
-      updateTeam.setPlayers(newTeam.getPlayers());
-      updateTeam.setManager(newTeam.getManager());
-
-      return Optional.of(teamRepository.save(updateTeam));
-    } else {
-      return Optional.empty();
-    }
+    return oldTeam.flatMap(team -> Optional.of(updateTeamDetails(updatedTeamDetails, team)));
   }
 
   public void deleteTeamById(UUID id) {
     teamRepository.deleteById(id);
   }
 
+  private Team updateTeamDetails(TeamDTO updatedTeamDetails, Team currentTeam) {
+    if (updatedTeamDetails.getName() != null) {
+      currentTeam.setName(updatedTeamDetails.getName());
+    }
+    if (updatedTeamDetails.getSportType() != null) {
+      currentTeam.setSportType(updatedTeamDetails.getSportType());
+    }
+    if (updatedTeamDetails.getYear() != 0) {
+      currentTeam.setYear(updatedTeamDetails.getYear());
+    }
+    if (updatedTeamDetails.getPlayers() != null) {
+      currentTeam.setPlayers(updatedTeamDetails.getPlayers());
+    }
+    if (updatedTeamDetails.getManager() != null) {
+      currentTeam.setManager(updatedTeamDetails.getManager());
+    }
+    return teamRepository.save(currentTeam);
+  }
 }

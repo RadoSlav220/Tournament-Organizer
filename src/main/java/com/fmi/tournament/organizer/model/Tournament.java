@@ -20,6 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public abstract class Tournament {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

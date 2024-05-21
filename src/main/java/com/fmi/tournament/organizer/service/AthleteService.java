@@ -32,25 +32,31 @@ public class AthleteService {
     return athleteRepository.save(athlete);
   }
 
-  public Optional<Athlete> updateAthleteById(UUID id, AthleteDTO newAthlete) {
+  public Optional<Athlete> updateAthleteById(UUID id, AthleteDTO updatedAthleteDetails) {
     Optional<Athlete> oldAthlete = athleteRepository.findById(id);
-
-    if (oldAthlete.isPresent()) {
-      Athlete updateAthlete = oldAthlete.get();
-
-      updateAthlete.setName(newAthlete.getName());
-      updateAthlete.setSportType(newAthlete.getSportType());
-      updateAthlete.setAge(newAthlete.getAge());
-      updateAthlete.setWeight(newAthlete.getWeight());
-      updateAthlete.setHeight(newAthlete.getHeight());
-
-      return Optional.of(athleteRepository.save(updateAthlete));
-    } else {
-      return Optional.empty();
-    }
+    return oldAthlete.flatMap(athlete -> Optional.of(updateAthleteDetails(updatedAthleteDetails, athlete)));
   }
 
   public void deleteAthleteById(UUID id) {
     athleteRepository.deleteById(id);
+  }
+
+  private Athlete updateAthleteDetails(AthleteDTO updatedAthleteDetails, Athlete currentAthlete) {
+    if (updatedAthleteDetails.getName() != null) {
+      currentAthlete.setName(updatedAthleteDetails.getName());
+    }
+    if (updatedAthleteDetails.getSportType() != null) {
+      currentAthlete.setSportType(updatedAthleteDetails.getSportType());
+    }
+    if (updatedAthleteDetails.getAge() != 0) {
+      currentAthlete.setAge(updatedAthleteDetails.getAge());
+    }
+    if (updatedAthleteDetails.getWeight() != 0) {
+      currentAthlete.setWeight(updatedAthleteDetails.getWeight());
+    }
+    if (updatedAthleteDetails.getHeight() != 0) {
+      currentAthlete.setHeight(updatedAthleteDetails.getHeight());
+    }
+    return athleteRepository.save(currentAthlete);
   }
 }

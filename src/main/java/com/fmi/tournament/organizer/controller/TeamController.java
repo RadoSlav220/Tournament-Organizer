@@ -28,6 +28,12 @@ public class TeamController {
     this.teamService = teamService;
   }
 
+  @PostMapping
+  public ResponseEntity<Team> createTeam(@RequestBody TeamDTO team) {
+    Team newTeam = teamService.createTeam(team);
+    return new ResponseEntity<>(newTeam, HttpStatus.OK);
+  }
+
   @GetMapping
   public ResponseEntity<List<Team>> getAllTeams() {
     List<Team> teams = teamService.getAllTeams();
@@ -44,19 +50,13 @@ public class TeamController {
     return fetchedTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
-  @PostMapping("/create")
-  public ResponseEntity<Team> createTeam(@RequestBody TeamDTO team) {
-    Team newTeam = teamService.createTeam(team);
-    return new ResponseEntity<>(newTeam, HttpStatus.OK);
+  @PatchMapping("/{id}")
+  public ResponseEntity<Team> updateTeamById(@PathVariable UUID id, @RequestBody TeamDTO updatedTeamDTO) {
+    Optional<Team> updatedTeam = teamService.updateTeamById(id, updatedTeamDTO);
+    return updatedTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
-  @PatchMapping("/update/{id}")
-  public ResponseEntity<Team> updateTeamById(@PathVariable UUID id, @RequestBody TeamDTO newTeam) {
-    Optional<Team> updatedTeam = teamService.updateTeamById(id, newTeam);
-    return updatedTeam.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-  }
-
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<HttpStatus> deleteTeamById(@PathVariable UUID id) {
     teamService.deleteTeamById(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
