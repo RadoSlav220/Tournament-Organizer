@@ -29,14 +29,16 @@ public class AthleteController {
     this.athleteService = athleteService;
   }
 
+  @PostMapping
+  public ResponseEntity<Athlete> createAthlete(@RequestBody AthleteDTO athlete) {
+    Athlete newAthlete = athleteService.createAthlete(athlete);
+    return new ResponseEntity<>(newAthlete, HttpStatus.OK);
+  }
+
   @GetMapping
   public ResponseEntity<List<Athlete>> getAllAthletes() {
     List<Athlete> athletes = athleteService.getAllAthletes();
-    if (athletes.isEmpty()) {
-      return new ResponseEntity<>(athletes, HttpStatus.NO_CONTENT);
-    } else {
-      return new ResponseEntity<>(athletes, HttpStatus.OK);
-    }
+    return new ResponseEntity<>(athletes, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
@@ -45,19 +47,13 @@ public class AthleteController {
     return fetchedAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
-  @PostMapping("/create")
-  public ResponseEntity<Athlete> createAthlete(@RequestBody AthleteDTO athlete) {
-    Athlete newAthlete = athleteService.createAthlete(athlete);
-    return new ResponseEntity<>(newAthlete, HttpStatus.OK);
-  }
-
-  @PatchMapping("/update/{id}")
-  public ResponseEntity<Athlete> updateAthleteById(@PathVariable UUID id, @RequestBody AthleteDTO newAthlete) {
-    Optional<Athlete> updatedAthlete = athleteService.updateAthleteById(id, newAthlete);
+  @PatchMapping("/{id}")
+  public ResponseEntity<Athlete> updateAthleteById(@PathVariable UUID id, @RequestBody AthleteDTO newAthleteDetails) {
+    Optional<Athlete> updatedAthlete = athleteService.updateAthleteById(id, newAthleteDetails);
     return updatedAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteAthleteById(@PathVariable UUID id) {
     athleteService.deleteAthleteById(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);

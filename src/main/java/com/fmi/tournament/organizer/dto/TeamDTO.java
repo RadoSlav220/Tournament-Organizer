@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class TeamDTO extends ParticipantDTO {
 
-  private int year;
+  private Integer year;
 
   private String manager;
 
