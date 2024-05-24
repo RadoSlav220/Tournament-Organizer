@@ -27,7 +27,7 @@ public class TeamService {
   }
 
   public Team createTeam(TeamDTO teamDTO) {
-    Team team = new Team(teamDTO.getName(), teamDTO.getSportType(), teamDTO.getYear(), teamDTO.getPlayers(), teamDTO.getManager());
+    Team team = new Team(teamDTO.getName(), teamDTO.getSportType(), teamDTO.getEstablishmentYear(), teamDTO.getPlayers(), teamDTO.getManager());
     return teamRepository.save(team);
   }
 
@@ -47,8 +47,8 @@ public class TeamService {
     if (updatedTeamDetails.getSportType() != null) {
       currentTeam.setSportType(updatedTeamDetails.getSportType());
     }
-    if (updatedTeamDetails.getYear() != null) {
-      currentTeam.setYear(updatedTeamDetails.getYear());
+    if (updatedTeamDetails.getEstablishmentYear() != null) {
+      currentTeam.setYear(updatedTeamDetails.getEstablishmentYear());
     }
     if (updatedTeamDetails.getPlayers() != null) {
       currentTeam.setPlayers(updatedTeamDetails.getPlayers());
