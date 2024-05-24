@@ -7,9 +7,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class AthleteDTO extends ParticipantDTO {
 
-  private int age;
+  private Integer age;
 
-  private int weight;
+  private Integer weight;
 
-  private int height;
+  private Integer height;
 }

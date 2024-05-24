@@ -37,11 +37,7 @@ public class KnockOutTournamentController {
   @GetMapping
   public ResponseEntity<List<KnockOutTournament>> getAllKnockOutTournaments() {
     List<KnockOutTournament> tournaments = knockOutTournamentService.getAllKnockOutTournaments();
-    if (tournaments.isEmpty()) {
-      return new ResponseEntity<>(tournaments, HttpStatus.NO_CONTENT);
-    } else {
-      return new ResponseEntity<>(tournaments, HttpStatus.OK);
-    }
+    return new ResponseEntity<>(tournaments, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
@@ -53,8 +49,8 @@ public class KnockOutTournamentController {
 
   @PatchMapping("/{id}")
   public ResponseEntity<KnockOutTournament> updateKnockOutTournamentById(@PathVariable UUID id,
-                                                                         @RequestBody KnockOutTournamentDTO knockOutTournamentDTO) {
-    Optional<KnockOutTournament> updatedTournament = knockOutTournamentService.updateKnockOutTournamentById(id, knockOutTournamentDTO);
+                                                                         @RequestBody KnockOutTournamentDTO newKnockOutTournamentDetails) {
+    Optional<KnockOutTournament> updatedTournament = knockOutTournamentService.updateKnockOutTournamentById(id, newKnockOutTournamentDetails);
     return updatedTournament.map(tournament -> new ResponseEntity<>(tournament, HttpStatus.OK))
         .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }

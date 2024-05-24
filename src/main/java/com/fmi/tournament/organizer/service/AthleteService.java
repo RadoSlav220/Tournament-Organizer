@@ -48,13 +48,13 @@ public class AthleteService {
     if (updatedAthleteDetails.getSportType() != null) {
       currentAthlete.setSportType(updatedAthleteDetails.getSportType());
     }
-    if (updatedAthleteDetails.getAge() != 0) {
+    if (updatedAthleteDetails.getAge() != null) {
       currentAthlete.setAge(updatedAthleteDetails.getAge());
     }
-    if (updatedAthleteDetails.getWeight() != 0) {
+    if (updatedAthleteDetails.getWeight() != null) {
       currentAthlete.setWeight(updatedAthleteDetails.getWeight());
     }
-    if (updatedAthleteDetails.getHeight() != 0) {
+    if (updatedAthleteDetails.getHeight() != null) {
       currentAthlete.setHeight(updatedAthleteDetails.getHeight());
     }
     return athleteRepository.save(currentAthlete);

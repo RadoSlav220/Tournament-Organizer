@@ -37,11 +37,7 @@ public class TeamController {
   @GetMapping
   public ResponseEntity<List<Team>> getAllTeams() {
     List<Team> teams = teamService.getAllTeams();
-    if (teams.isEmpty()) {
-      return new ResponseEntity<>(teams, HttpStatus.NO_CONTENT);
-    } else {
-      return new ResponseEntity<>(teams, HttpStatus.OK);
-    }
+    return new ResponseEntity<>(teams, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
@@ -51,8 +47,8 @@ public class TeamController {
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Team> updateTeamById(@PathVariable UUID id, @RequestBody TeamDTO updatedTeamDTO) {
-    Optional<Team> updatedTeam = teamService.updateTeamById(id, updatedTeamDTO);
+  public ResponseEntity<Team> updateTeamById(@PathVariable UUID id, @RequestBody TeamDTO updatedTeamDetails) {
+    Optional<Team> updatedTeam = teamService.updateTeamById(id, updatedTeamDetails);
     return updatedTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 

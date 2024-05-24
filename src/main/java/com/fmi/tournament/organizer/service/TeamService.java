@@ -47,7 +47,7 @@ public class TeamService {
     if (updatedTeamDetails.getSportType() != null) {
       currentTeam.setSportType(updatedTeamDetails.getSportType());
     }
-    if (updatedTeamDetails.getYear() != 0) {
+    if (updatedTeamDetails.getYear() != null) {
       currentTeam.setYear(updatedTeamDetails.getYear());
     }
     if (updatedTeamDetails.getPlayers() != null) {

@@ -11,5 +11,5 @@ public abstract class TournamentDTO {
 
   private SportType sportType;
 
-  private int capacity;
+  private Integer capacity;
 }

@@ -1,0 +1,11 @@
+AthleteDTO
+
+{
+    "name": "Simeon",
+    "sportType": "TENNIS",
+    "age": 32,
+    "weight": 68,
+    "height": 185
+}
+
+

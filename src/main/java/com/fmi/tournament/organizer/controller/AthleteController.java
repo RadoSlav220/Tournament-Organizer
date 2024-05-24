@@ -38,11 +38,7 @@ public class AthleteController {
   @GetMapping
   public ResponseEntity<List<Athlete>> getAllAthletes() {
     List<Athlete> athletes = athleteService.getAllAthletes();
-    if (athletes.isEmpty()) {
-      return new ResponseEntity<>(athletes, HttpStatus.NO_CONTENT);
-    } else {
-      return new ResponseEntity<>(athletes, HttpStatus.OK);
-    }
+    return new ResponseEntity<>(athletes, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
@@ -52,8 +48,8 @@ public class AthleteController {
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Athlete> updateAthleteById(@PathVariable UUID id, @RequestBody AthleteDTO newAthlete) {
-    Optional<Athlete> updatedAthlete = athleteService.updateAthleteById(id, newAthlete);
+  public ResponseEntity<Athlete> updateAthleteById(@PathVariable UUID id, @RequestBody AthleteDTO newAthleteDetails) {
+    Optional<Athlete> updatedAthlete = athleteService.updateAthleteById(id, newAthleteDetails);
     return updatedAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 

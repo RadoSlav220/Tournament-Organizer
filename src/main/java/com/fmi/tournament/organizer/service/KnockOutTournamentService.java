@@ -49,9 +49,9 @@ public class KnockOutTournamentService {
   }
 
   private KnockOutTournament updateTournamentDetails(KnockOutTournamentDTO updatedTournamentDetails, KnockOutTournament currentTournament) {
-    if (currentTournament.getParticipants().size() > updatedTournamentDetails.getCapacity()) {
+    if (updatedTournamentDetails.getCapacity() != null && currentTournament.getParticipants().size() > updatedTournamentDetails.getCapacity()) {
       throw new InvalidTournamentCapacityException("The updated capacity cannot be less than the number of participants already enrolled.");
-    } else if (updatedTournamentDetails.getCapacity() != 0 && !isPowerOfTwo(updatedTournamentDetails.getCapacity())) {
+    } else if (updatedTournamentDetails.getCapacity() != null && !isPowerOfTwo(updatedTournamentDetails.getCapacity())) {
       throw new InvalidTournamentCapacityException("The updated capacity must be a power of two.");
     }
 
@@ -64,7 +64,7 @@ public class KnockOutTournamentService {
     if (updatedTournamentDetails.getSportType() != null) {
       currentTournament.setSportType(updatedTournamentDetails.getSportType());
     }
-    if (updatedTournamentDetails.getCapacity() != 0) {
+    if (updatedTournamentDetails.getCapacity() != null) {
       currentTournament.setCapacity(updatedTournamentDetails.getCapacity());
     }
 
