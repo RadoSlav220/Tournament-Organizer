@@ -1,18 +1,20 @@
 package com.fmi.tournament.organizer.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +23,13 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    property = "type")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = KnockOutTournament.class, name = "knockOutTournament"),
+})
 public abstract class Tournament {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -53,6 +62,4 @@ public abstract class Tournament {
     this.participants = new ArrayList<>();
     this.matches = new ArrayList<>();
   }
-
-  public void registerParticipant() {}
 }

@@ -9,3 +9,13 @@ AthleteDTO
 }
 
 
+
+KnockOutTournamentDTO
+
+{
+    "name": "UCL",
+    "description": "Champions League",
+    "sportType": "FOOTBALL",
+    "capacity": 32
+}
+
