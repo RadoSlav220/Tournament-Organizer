@@ -32,30 +32,30 @@ public class AthleteService {
     return athleteRepository.save(athlete);
   }
 
-  public Optional<Athlete> updateAthleteById(UUID id, AthleteDTO updatedAthleteDetails) {
-    Optional<Athlete> oldAthlete = athleteRepository.findById(id);
-    return oldAthlete.flatMap(athlete -> Optional.of(updateAthleteDetails(updatedAthleteDetails, athlete)));
+  public Optional<Athlete> updateAthleteById(UUID id, AthleteDTO updatedAthlete) {
+    Optional<Athlete> currentAthlete = athleteRepository.findById(id);
+    return currentAthlete.flatMap(athlete -> Optional.of(updateAthleteDetails(updatedAthlete, athlete)));
   }
 
   public void deleteAthleteById(UUID id) {
     athleteRepository.deleteById(id);
   }
 
-  private Athlete updateAthleteDetails(AthleteDTO updatedAthleteDetails, Athlete currentAthlete) {
-    if (updatedAthleteDetails.getName() != null) {
-      currentAthlete.setName(updatedAthleteDetails.getName());
+  private Athlete updateAthleteDetails(AthleteDTO updatedAthlete, Athlete currentAthlete) {
+    if (updatedAthlete.getName() != null) {
+      currentAthlete.setName(updatedAthlete.getName());
     }
-    if (updatedAthleteDetails.getSportType() != null) {
-      currentAthlete.setSportType(updatedAthleteDetails.getSportType());
+    if (updatedAthlete.getSportType() != null) {
+      currentAthlete.setSportType(updatedAthlete.getSportType());
     }
-    if (updatedAthleteDetails.getAge() != null) {
-      currentAthlete.setAge(updatedAthleteDetails.getAge());
+    if (updatedAthlete.getAge() != null) {
+      currentAthlete.setAge(updatedAthlete.getAge());
     }
-    if (updatedAthleteDetails.getWeight() != null) {
-      currentAthlete.setWeight(updatedAthleteDetails.getWeight());
+    if (updatedAthlete.getWeight() != null) {
+      currentAthlete.setWeight(updatedAthlete.getWeight());
     }
-    if (updatedAthleteDetails.getHeight() != null) {
-      currentAthlete.setHeight(updatedAthleteDetails.getHeight());
+    if (updatedAthlete.getHeight() != null) {
+      currentAthlete.setHeight(updatedAthlete.getHeight());
     }
     return athleteRepository.save(currentAthlete);
   }

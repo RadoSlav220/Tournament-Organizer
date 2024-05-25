@@ -8,6 +8,13 @@ AthleteDTO
     "height": 185
 }
 
+{
+    "name": "Michele",
+    "sportType": "TABLE_TENNIS",
+    "age": 24,
+    "weight": 55,
+    "height": 168
+}
 
 
 KnockOutTournamentDTO
@@ -17,5 +24,16 @@ KnockOutTournamentDTO
     "description": "Champions League",
     "sportType": "FOOTBALL",
     "capacity": 32
+}
+
+
+TeamDTO
+
+{
+    "name": "Real Madrid",
+    "sportType": "FOOTBALL",
+    "establishmentYear": 1902,
+    "manager": "Carlo Anchelotti",
+    "players": ["Jude", "Kroos", "Vini"]
 }
 

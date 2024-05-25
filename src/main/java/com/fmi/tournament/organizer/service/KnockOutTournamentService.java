@@ -39,33 +39,33 @@ public class KnockOutTournamentService {
     return knockOutTournamentRepository.findById(id);
   }
 
-  public Optional<KnockOutTournament> updateKnockOutTournamentById(UUID id, KnockOutTournamentDTO updatedTournamentDetails) {
-    Optional<KnockOutTournament> oldTournament = knockOutTournamentRepository.findById(id);
-    return oldTournament.flatMap(tournament -> Optional.of(updateTournamentDetails(updatedTournamentDetails, tournament)));
+  public Optional<KnockOutTournament> updateKnockOutTournamentById(UUID id, KnockOutTournamentDTO updatedTournament) {
+    Optional<KnockOutTournament> currentTournament = knockOutTournamentRepository.findById(id);
+    return currentTournament.flatMap(tournament -> Optional.of(updateTournamentDetails(updatedTournament, tournament)));
   }
 
   public void deleteKnockOutTournamentById(UUID id) {
     knockOutTournamentRepository.deleteById(id);
   }
 
-  private KnockOutTournament updateTournamentDetails(KnockOutTournamentDTO updatedTournamentDetails, KnockOutTournament currentTournament) {
-    if (updatedTournamentDetails.getCapacity() != null && currentTournament.getParticipants().size() > updatedTournamentDetails.getCapacity()) {
+  private KnockOutTournament updateTournamentDetails(KnockOutTournamentDTO updatedTournament, KnockOutTournament currentTournament) {
+    if (updatedTournament.getCapacity() != null && currentTournament.getParticipants().size() > updatedTournament.getCapacity()) {
       throw new InvalidTournamentCapacityException("The updated capacity cannot be less than the number of participants already enrolled.");
-    } else if (updatedTournamentDetails.getCapacity() != null && !isPowerOfTwo(updatedTournamentDetails.getCapacity())) {
+    } else if (updatedTournament.getCapacity() != null && !isPowerOfTwo(updatedTournament.getCapacity())) {
       throw new InvalidTournamentCapacityException("The updated capacity must be a power of two.");
     }
 
-    if (updatedTournamentDetails.getName() != null) {
-      currentTournament.setName(updatedTournamentDetails.getName());
+    if (updatedTournament.getName() != null) {
+      currentTournament.setName(updatedTournament.getName());
     }
-    if (updatedTournamentDetails.getDescription() != null) {
-      currentTournament.setDescription(updatedTournamentDetails.getDescription());
+    if (updatedTournament.getDescription() != null) {
+      currentTournament.setDescription(updatedTournament.getDescription());
     }
-    if (updatedTournamentDetails.getSportType() != null) {
-      currentTournament.setSportType(updatedTournamentDetails.getSportType());
+    if (updatedTournament.getSportType() != null) {
+      currentTournament.setSportType(updatedTournament.getSportType());
     }
-    if (updatedTournamentDetails.getCapacity() != null) {
-      currentTournament.setCapacity(updatedTournamentDetails.getCapacity());
+    if (updatedTournament.getCapacity() != null) {
+      currentTournament.setCapacity(updatedTournament.getCapacity());
     }
 
     return knockOutTournamentRepository.save(currentTournament);

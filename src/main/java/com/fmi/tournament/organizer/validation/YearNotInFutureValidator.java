@@ -13,6 +13,6 @@ public class YearNotInFutureValidator implements ConstraintValidator<YearNotInFu
   @Override
   public boolean isValid(Integer year, ConstraintValidatorContext constraintValidatorContext) {
     LocalDate now = LocalDate.now();
-    return year == null || year <= now.getYear();
+    return year == null || (year > 0 && year <= now.getYear());
   }
 }
