@@ -3,21 +3,24 @@ package com.fmi.tournament.organizer.controller;
 import com.fmi.tournament.organizer.dto.AthleteDTO;
 import com.fmi.tournament.organizer.model.Athlete;
 import com.fmi.tournament.organizer.service.AthleteService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/athletes")
 public class AthleteController {
@@ -30,9 +33,9 @@ public class AthleteController {
   }
 
   @PostMapping
-  public ResponseEntity<Athlete> createAthlete(@RequestBody AthleteDTO athlete) {
+  public ResponseEntity<Athlete> createAthlete(@RequestBody @Valid AthleteDTO athlete) {
     Athlete newAthlete = athleteService.createAthlete(athlete);
-    return new ResponseEntity<>(newAthlete, HttpStatus.OK);
+    return new ResponseEntity<>(newAthlete, HttpStatus.CREATED);
   }
 
   @GetMapping
@@ -47,10 +50,10 @@ public class AthleteController {
     return fetchedAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
-  @PatchMapping("/{id}")
-  public ResponseEntity<Athlete> updateAthleteById(@PathVariable UUID id, @RequestBody AthleteDTO newAthleteDetails) {
-    Optional<Athlete> updatedAthlete = athleteService.updateAthleteById(id, newAthleteDetails);
-    return updatedAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  @PutMapping("/{id}")
+  public ResponseEntity<Athlete> updateAthleteById(@PathVariable UUID id, @RequestBody @Valid AthleteDTO updatedAthlete) {
+    Optional<Athlete> resultAthlete = athleteService.updateAthleteById(id, updatedAthlete);
+    return resultAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
   @DeleteMapping("/{id}")

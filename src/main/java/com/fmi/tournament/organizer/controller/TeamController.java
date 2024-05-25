@@ -3,21 +3,24 @@ package com.fmi.tournament.organizer.controller;
 import com.fmi.tournament.organizer.dto.TeamDTO;
 import com.fmi.tournament.organizer.model.Team;
 import com.fmi.tournament.organizer.service.TeamService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/teams")
 public class TeamController {
@@ -29,9 +32,9 @@ public class TeamController {
   }
 
   @PostMapping
-  public ResponseEntity<Team> createTeam(@RequestBody TeamDTO team) {
+  public ResponseEntity<Team> createTeam(@RequestBody @Valid TeamDTO team) {
     Team newTeam = teamService.createTeam(team);
-    return new ResponseEntity<>(newTeam, HttpStatus.OK);
+    return new ResponseEntity<>(newTeam, HttpStatus.CREATED);
   }
 
   @GetMapping
@@ -46,10 +49,10 @@ public class TeamController {
     return fetchedTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
-  @PatchMapping("/{id}")
-  public ResponseEntity<Team> updateTeamById(@PathVariable UUID id, @RequestBody TeamDTO updatedTeamDetails) {
-    Optional<Team> updatedTeam = teamService.updateTeamById(id, updatedTeamDetails);
-    return updatedTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  @PutMapping("/{id}")
+  public ResponseEntity<Team> updateTeamById(@PathVariable UUID id, @RequestBody @Valid TeamDTO updatedTeam) {
+    Optional<Team> resultTeam = teamService.updateTeamById(id, updatedTeam);
+    return resultTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
   @DeleteMapping("/{id}")
