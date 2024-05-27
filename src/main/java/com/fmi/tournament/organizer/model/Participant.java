@@ -39,7 +39,7 @@ public abstract class Participant {
   @Enumerated(EnumType.STRING)
   private SportType sportType;
 
-  @ManyToMany
+  @ManyToMany(mappedBy = "participants")
   private List<Tournament> tournaments;
 
   @OneToMany
