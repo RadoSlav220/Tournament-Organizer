@@ -42,13 +42,17 @@ public abstract class Participant {
   @ManyToMany(mappedBy = "participants")
   private List<Tournament> tournaments;
 
-  @OneToMany
-  private List<Match> matches;
+  @OneToMany(mappedBy="homeParticipant")
+  private List<Match> homeMatches;
+
+  @OneToMany(mappedBy="awayParticipant")
+  private List<Match> awayMatches;
 
   protected Participant(String name, SportType sportType) {
     this.name = name;
     this.sportType = sportType;
     tournaments = new ArrayList<>();
-    matches = new ArrayList<>();
+    homeMatches = new ArrayList<>();
+    awayMatches = new ArrayList<>();
   }
 }

@@ -47,7 +47,7 @@ public abstract class Tournament {
   )
   private List<Participant> participants;
 
-  @OneToMany
+  @OneToMany(mappedBy="tournament")
   private List<Match> matches;
 
   protected Tournament(String name, String description, SportType sportType, int capacity) {

@@ -3,6 +3,7 @@ package com.fmi.tournament.organizer.controller;
 import com.fmi.tournament.organizer.dto.KnockOutTournamentDTO;
 import com.fmi.tournament.organizer.model.KnockOutTournament;
 import com.fmi.tournament.organizer.service.KnockOutTournamentService;
+import com.fmi.tournament.organizer.service.TournamentService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -26,10 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/knockOutTournament")
 public class KnockOutTournamentController {
   private final KnockOutTournamentService knockOutTournamentService;
+  private final TournamentService tournamentService;
 
   @Autowired
-  public KnockOutTournamentController(KnockOutTournamentService knockOutTournamentService) {
-    this.knockOutTournamentService = knockOutTournamentService;
+  public KnockOutTournamentController(KnockOutTournamentService knockOutTournamentService, TournamentService tournamentService) {
+      this.knockOutTournamentService = knockOutTournamentService;
+      this.tournamentService = tournamentService;
   }
 
   @PostMapping
@@ -63,5 +66,19 @@ public class KnockOutTournamentController {
   public ResponseEntity<HttpStatus> deleteKnockOutTournamentById(@PathVariable UUID id) {
     knockOutTournamentService.deleteKnockOutTournamentById(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @PostMapping("/startTournament/{id}")
+  public ResponseEntity<HttpStatus> startTournament(@PathVariable UUID id) {
+    knockOutTournamentService.startTournament(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("/{tournamentID}/{matchID}/{resultHomeParticipant}/{resultAwayParticipant}")
+  public ResponseEntity<HttpStatus> playMatch(@PathVariable UUID tournamentID, @PathVariable UUID matchID,
+                                                      @PathVariable int resultHomeParticipant, @PathVariable
+                                                        int resultAwayParticipant) {
+    tournamentService.playMatch(matchID, resultHomeParticipant, resultAwayParticipant);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }
