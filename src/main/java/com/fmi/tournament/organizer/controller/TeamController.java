@@ -2,6 +2,7 @@ package com.fmi.tournament.organizer.controller;
 
 import com.fmi.tournament.organizer.dto.TeamDTO;
 import com.fmi.tournament.organizer.model.Team;
+import com.fmi.tournament.organizer.service.ParticipantService;
 import com.fmi.tournament.organizer.service.TeamService;
 import com.fmi.tournament.organizer.service.TournamentService;
 import jakarta.validation.Valid;
@@ -26,12 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/teams")
 public class TeamController {
   private final TeamService teamService;
-  private final TournamentService tournamentService;
+  private final ParticipantService participantService;
 
   @Autowired
-  public TeamController(TeamService teamService, TournamentService tournamentService) {
+  public TeamController(TeamService teamService, ParticipantService participantService) {
     this.teamService = teamService;
-    this.tournamentService = tournamentService;
+    this.participantService = participantService;
   }
 
   @PostMapping
@@ -66,7 +67,13 @@ public class TeamController {
 
   @PostMapping("/{teamID}/{tournamentID}")
   public ResponseEntity<Void> registration(@PathVariable UUID teamID, @PathVariable UUID tournamentID){
-    tournamentService.registration(teamID, tournamentID);
+    participantService.registration(teamID, tournamentID);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PostMapping("/{teamID}/{tournamentID}")
+  public ResponseEntity<Void> unregistration(@PathVariable UUID teamID, @PathVariable UUID tournamentID){
+    participantService.unregistration(teamID, tournamentID);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }
