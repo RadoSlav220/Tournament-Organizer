@@ -66,13 +66,13 @@ public class AthleteController {
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
-  @PostMapping("/{participantID}/{tournamentID}")
+  @PostMapping("/registration/{participantID}/{tournamentID}")
   public ResponseEntity<Void> registration(@PathVariable UUID participantID, @PathVariable UUID tournamentID){
     participantService.registration(participantID, tournamentID);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PostMapping("/{participantID}/{tournamentID}")
+  @PostMapping("/unregistration/{participantID}/{tournamentID}")
   public ResponseEntity<Void> unregistration(@PathVariable UUID participantID, @PathVariable UUID tournamentID){
     participantService.unregistration(participantID, tournamentID);
     return new ResponseEntity<>(HttpStatus.OK);

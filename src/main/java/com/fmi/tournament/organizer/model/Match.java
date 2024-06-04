@@ -40,7 +40,7 @@ public class Match {
   @JsonBackReference
   private Participant awayParticipant;
 
-  @Enumerated(EnumType.STRING)
+  //@Enumerated(EnumType.STRING)
   private MatchState state;
 
   private int resultHomeParticipant;

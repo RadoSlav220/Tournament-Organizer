@@ -65,13 +65,13 @@ public class TeamController {
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
-  @PostMapping("/{teamID}/{tournamentID}")
+  @PostMapping("/registration/{teamID}/{tournamentID}")
   public ResponseEntity<Void> registration(@PathVariable UUID teamID, @PathVariable UUID tournamentID){
     participantService.registration(teamID, tournamentID);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PostMapping("/{teamID}/{tournamentID}")
+  @PostMapping("/unregistration/{teamID}/{tournamentID}")
   public ResponseEntity<Void> unregistration(@PathVariable UUID teamID, @PathVariable UUID tournamentID){
     participantService.unregistration(teamID, tournamentID);
     return new ResponseEntity<>(HttpStatus.OK);
