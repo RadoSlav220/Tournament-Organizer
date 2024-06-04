@@ -84,7 +84,7 @@ public class KnockOutTournamentService {
 
 
       for(int i = 0; i < tournament.getParticipants().size() - 1; i+=2){
-          Match newMatch = new Match (LocalDate.of(2024, 5, 27), tournament, tournament.getParticipants().get(i),
+          Match newMatch = new Match (LocalDate.of(2024, 6, 27), tournament, tournament.getParticipants().get(i),
                   tournament.getParticipants().get(i + 1), MatchState.NOT_STARTED, 0, 0);
 
           matchRepository.save(newMatch);

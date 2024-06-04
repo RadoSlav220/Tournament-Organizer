@@ -1,5 +1,6 @@
 package com.fmi.tournament.organizer.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,16 +27,20 @@ public class Match {
 
   @ManyToOne
   @JoinColumn(name="tournament_id", nullable=false)
+  @JsonBackReference
   private Tournament tournament;
 
   @ManyToOne
   @JoinColumn(name="home_participant_id", nullable=false)
+  @JsonBackReference
   private Participant homeParticipant;
 
   @ManyToOne
   @JoinColumn(name="away_participant_id", nullable=false)
+  @JsonBackReference
   private Participant awayParticipant;
 
+  @Enumerated(EnumType.STRING)
   private MatchState state;
 
   private int resultHomeParticipant;
