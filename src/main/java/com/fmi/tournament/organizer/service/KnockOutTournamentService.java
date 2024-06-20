@@ -2,21 +2,26 @@ package com.fmi.tournament.organizer.service;
 
 import com.fmi.tournament.organizer.dto.KnockOutTournamentDTO;
 import com.fmi.tournament.organizer.exception.InvalidTournamentCapacityException;
-import com.fmi.tournament.organizer.model.KnockOutTournament;
+import com.fmi.tournament.organizer.model.*;
 import com.fmi.tournament.organizer.repository.KnockOutTournamentRepository;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.*;
+
+import com.fmi.tournament.organizer.repository.MatchRepository;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class KnockOutTournamentService {
   private final KnockOutTournamentRepository knockOutTournamentRepository;
-
+  private final MatchRepository matchRepository;
   @Autowired
-  public KnockOutTournamentService(KnockOutTournamentRepository knockOutTournamentRepository) {
-    this.knockOutTournamentRepository = knockOutTournamentRepository;
+  public KnockOutTournamentService(KnockOutTournamentRepository knockOutTournamentRepository, MatchRepository matchRepository) {
+      this.knockOutTournamentRepository = knockOutTournamentRepository;
+      this.matchRepository = matchRepository;
   }
 
   public KnockOutTournament createKnockOutTournament(KnockOutTournamentDTO knockOutTournamentDTO) {
@@ -69,6 +74,23 @@ public class KnockOutTournamentService {
     }
 
     return knockOutTournamentRepository.save(currentTournament);
+  }
+
+  public void startTournament(UUID id){
+      KnockOutTournament tournament = knockOutTournamentRepository.findById(id).orElseThrow();
+      tournament.setState(TournamentState.ONGOING);
+      //TODO:To randomize a list
+
+
+
+      for(int i = 0; i < tournament.getParticipants().size() - 1; i+=2){
+          Match newMatch = new Match (LocalDate.of(2024, 6, 27), tournament, tournament.getParticipants().get(i),
+                  tournament.getParticipants().get(i + 1), MatchState.NOT_STARTED, 0, 0);
+
+          matchRepository.save(newMatch);
+      }
+
+      knockOutTournamentRepository.save(tournament);
   }
 
   private boolean isPowerOfTwo(int n) {

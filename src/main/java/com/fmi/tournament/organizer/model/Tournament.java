@@ -1,17 +1,8 @@
 package com.fmi.tournament.organizer.model;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +21,7 @@ import lombok.Setter;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = KnockOutTournament.class, name = "knockOutTournament"),
 })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public abstract class Tournament {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -48,9 +40,15 @@ public abstract class Tournament {
   private int capacity;
 
   @ManyToMany
+  @JoinTable(
+          name="tournament_participants",
+          joinColumns = @JoinColumn(name = "tournament_id"),
+          inverseJoinColumns = @JoinColumn(name = "participant_id")
+  )
   private List<Participant> participants;
 
-  @OneToMany
+  @OneToMany(mappedBy="tournament")
+  @JsonManagedReference
   private List<Match> matches;
 
   protected Tournament(String name, String description, SportType sportType, int capacity) {
