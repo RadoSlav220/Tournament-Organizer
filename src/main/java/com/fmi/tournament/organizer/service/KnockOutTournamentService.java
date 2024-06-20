@@ -2,6 +2,7 @@ package com.fmi.tournament.organizer.service;
 
 import com.fmi.tournament.organizer.dto.KnockOutTournamentDTO;
 import com.fmi.tournament.organizer.exception.InvalidTournamentCapacityException;
+import com.fmi.tournament.organizer.model.*;
 import com.fmi.tournament.organizer.model.Athlete;
 import com.fmi.tournament.organizer.model.KnockOutTournament;
 import com.fmi.tournament.organizer.model.Participant;
@@ -18,18 +19,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.*;
+
+import com.fmi.tournament.organizer.repository.MatchRepository;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class KnockOutTournamentService {
   private final KnockOutTournamentRepository knockOutTournamentRepository;
+  private final MatchRepository matchRepository;
   @Autowired
   private AthleteRepository athleteRepository;
 
   @Autowired
-  public KnockOutTournamentService(KnockOutTournamentRepository knockOutTournamentRepository) {
-    this.knockOutTournamentRepository = knockOutTournamentRepository;
+  public KnockOutTournamentService(KnockOutTournamentRepository knockOutTournamentRepository, MatchRepository matchRepository) {
+      this.knockOutTournamentRepository = knockOutTournamentRepository;
+      this.matchRepository = matchRepository;
   }
 
   public KnockOutTournament createKnockOutTournament(KnockOutTournamentDTO knockOutTournamentDTO) {

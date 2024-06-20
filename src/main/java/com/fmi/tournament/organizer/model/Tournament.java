@@ -1,5 +1,7 @@
 package com.fmi.tournament.organizer.model;
 
+import com.fasterxml.jackson.annotation.*;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.Entity;
@@ -32,6 +34,7 @@ import lombok.Setter;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = KnockOutTournament.class, name = "knockOutTournament"),
 })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public abstract class Tournament {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -57,7 +60,8 @@ public abstract class Tournament {
   )
   private List<Participant> participants;
 
-  @OneToMany
+  @OneToMany(mappedBy="tournament")
+  @JsonManagedReference
   private List<Match> matches;
 
   protected Tournament(String name, String description, SportType sportType, int capacity) {

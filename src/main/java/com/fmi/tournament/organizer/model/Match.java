@@ -1,11 +1,14 @@
 package com.fmi.tournament.organizer.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -20,9 +23,11 @@ public class Match {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  private Date time;
+  private LocalDate time;
 
   @ManyToOne
+  @JoinColumn(name="tournament_id", nullable=false)
+  @JsonBackReference
   private Tournament tournament;
 
   private UUID homeParticipantID;

@@ -3,6 +3,7 @@ package com.fmi.tournament.organizer.controller;
 import com.fmi.tournament.organizer.dto.KnockOutTournamentDTO;
 import com.fmi.tournament.organizer.model.KnockOutTournament;
 import com.fmi.tournament.organizer.service.KnockOutTournamentService;
+import com.fmi.tournament.organizer.service.TournamentService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -26,10 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/knockOutTournament")
 public class KnockOutTournamentController {
   private final KnockOutTournamentService knockOutTournamentService;
+  private final TournamentService tournamentService;
 
   @Autowired
-  public KnockOutTournamentController(KnockOutTournamentService knockOutTournamentService) {
-    this.knockOutTournamentService = knockOutTournamentService;
+  public KnockOutTournamentController(KnockOutTournamentService knockOutTournamentService, TournamentService tournamentService) {
+      this.knockOutTournamentService = knockOutTournamentService;
+      this.tournamentService = tournamentService;
   }
 
   @PostMapping
