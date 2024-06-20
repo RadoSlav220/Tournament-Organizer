@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public abstract class ParticipantDTO {
+public abstract class ParticipantCreateDTO {
 
   @NotBlank(message = "Participant name cannot be null/empty.")
   private String name;

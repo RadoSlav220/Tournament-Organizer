@@ -1,6 +1,7 @@
 package com.fmi.tournament.organizer.controller;
 
-import com.fmi.tournament.organizer.dto.AthleteDTO;
+import com.fmi.tournament.organizer.dto.AthleteResponseDTO;
+import com.fmi.tournament.organizer.dto.AthleteCreateDTO;
 import com.fmi.tournament.organizer.model.Athlete;
 import com.fmi.tournament.organizer.service.AthleteService;
 import com.fmi.tournament.organizer.service.ParticipantService;
@@ -36,26 +37,26 @@ public class AthleteController {
   }
 
   @PostMapping
-  public ResponseEntity<Athlete> createAthlete(@RequestBody @Valid AthleteDTO athlete) {
-    Athlete newAthlete = athleteService.createAthlete(athlete);
+  public ResponseEntity<AthleteResponseDTO> createAthlete(@RequestBody @Valid AthleteCreateDTO athlete) {
+    AthleteResponseDTO newAthlete = athleteService.createAthlete(athlete);
     return new ResponseEntity<>(newAthlete, HttpStatus.CREATED);
   }
 
   @GetMapping
-  public ResponseEntity<List<Athlete>> getAllAthletes() {
-    List<Athlete> athletes = athleteService.getAllAthletes();
+  public ResponseEntity<List<AthleteResponseDTO>> getAllAthletes() {
+    List<AthleteResponseDTO> athletes = athleteService.getAllAthletes();
     return new ResponseEntity<>(athletes, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Athlete> getAthleteById(@PathVariable UUID id) {
-    Optional<Athlete> fetchedAthlete = athleteService.getAthleteById(id);
+  public ResponseEntity<AthleteResponseDTO> getAthleteById(@PathVariable UUID id) {
+    Optional<AthleteResponseDTO> fetchedAthlete = athleteService.getAthleteById(id);
     return fetchedAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Athlete> updateAthleteById(@PathVariable UUID id, @RequestBody @Valid AthleteDTO updatedAthlete) {
-    Optional<Athlete> resultAthlete = athleteService.updateAthleteById(id, updatedAthlete);
+  public ResponseEntity<AthleteResponseDTO> updateAthleteById(@PathVariable UUID id, @RequestBody @Valid AthleteCreateDTO updatedAthlete) {
+    Optional<AthleteResponseDTO> resultAthlete = athleteService.updateAthleteById(id, updatedAthlete);
     return resultAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 

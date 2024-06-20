@@ -12,16 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 public class Team extends Participant {
-  private int year;
+  private int establishmentYear;
 
   @ElementCollection
   private List<String> players;
 
   private String manager;
 
-  public Team(String name, SportType sportType, int year, List<String> players, String manager) {
+  public Team(String name, SportType sportType, int establishmentYear, List<String> players, String manager) {
     super(name, sportType);
-    this.year = year;
+    this.establishmentYear = establishmentYear;
     this.players = players;
     this.manager = manager;
   }

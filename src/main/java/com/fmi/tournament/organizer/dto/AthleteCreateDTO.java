@@ -4,11 +4,10 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class AthleteDTO extends ParticipantDTO {
+public class AthleteCreateDTO extends ParticipantCreateDTO {
 
   @Min(value = 5, message = "An athlete must be at least 5 years old.")
   @Max(value = 120, message = "An athlete cannot be older than 120.")

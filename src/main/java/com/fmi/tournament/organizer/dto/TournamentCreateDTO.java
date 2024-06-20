@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public abstract class TournamentDTO {
+public abstract class TournamentCreateDTO {
   @NotBlank(message = "Tournament name cannot be blank.")
   private String name;
 

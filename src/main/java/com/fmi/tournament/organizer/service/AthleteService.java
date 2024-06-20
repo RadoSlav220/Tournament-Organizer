@@ -1,7 +1,9 @@
 package com.fmi.tournament.organizer.service;
 
-import com.fmi.tournament.organizer.dto.AthleteDTO;
+import com.fmi.tournament.organizer.dto.AthleteCreateDTO;
+import com.fmi.tournament.organizer.dto.AthleteResponseDTO;
 import com.fmi.tournament.organizer.model.Athlete;
+import com.fmi.tournament.organizer.model.Tournament;
 import com.fmi.tournament.organizer.repository.AthleteRepository;
 import java.util.List;
 import java.util.Optional;
@@ -18,30 +20,32 @@ public class AthleteService {
     this.athleteRepository = athleteRepository;
   }
 
-  public List<Athlete> getAllAthletes() {
-    return athleteRepository.findAll();
+  public List<AthleteResponseDTO> getAllAthletes() {
+    return athleteRepository.findAll().stream().map(this::toResponseDto).toList();
   }
 
-  public Optional<Athlete> getAthleteById(UUID id) {
-    return athleteRepository.findById(id);
+  public Optional<AthleteResponseDTO> getAthleteById(UUID id) {
+    return athleteRepository.findById(id).map(this::toResponseDto);
   }
 
-  public Athlete createAthlete(AthleteDTO athleteDTO) {
+  public AthleteResponseDTO createAthlete(AthleteCreateDTO athleteCreateDTO) {
     Athlete athlete =
-        new Athlete(athleteDTO.getName(), athleteDTO.getSportType(), athleteDTO.getAge(), athleteDTO.getWeight(), athleteDTO.getHeight());
-    return athleteRepository.save(athlete);
+        new Athlete(athleteCreateDTO.getName(), athleteCreateDTO.getSportType(), athleteCreateDTO.getAge(), athleteCreateDTO.getWeight(),
+            athleteCreateDTO.getHeight());
+    athleteRepository.saveAndFlush(athlete);
+    return toResponseDto(athlete);
   }
 
-  public Optional<Athlete> updateAthleteById(UUID id, AthleteDTO updatedAthlete) {
+  public Optional<AthleteResponseDTO> updateAthleteById(UUID id, AthleteCreateDTO updatedAthlete) {
     Optional<Athlete> currentAthlete = athleteRepository.findById(id);
-    return currentAthlete.flatMap(athlete -> Optional.of(updateAthleteDetails(updatedAthlete, athlete)));
+    return currentAthlete.map(athlete -> toResponseDto(updateAthleteDetails(updatedAthlete, athlete)));
   }
 
   public void deleteAthleteById(UUID id) {
     athleteRepository.deleteById(id);
   }
 
-  private Athlete updateAthleteDetails(AthleteDTO updatedAthlete, Athlete currentAthlete) {
+  private Athlete updateAthleteDetails(AthleteCreateDTO updatedAthlete, Athlete currentAthlete) {
     if (updatedAthlete.getName() != null) {
       currentAthlete.setName(updatedAthlete.getName());
     }
@@ -57,6 +61,14 @@ public class AthleteService {
     if (updatedAthlete.getHeight() != null) {
       currentAthlete.setHeight(updatedAthlete.getHeight());
     }
-    return athleteRepository.save(currentAthlete);
+    return athleteRepository.saveAndFlush(currentAthlete);
+  }
+
+  private AthleteResponseDTO toResponseDto(Athlete athlete) {
+    return new AthleteResponseDTO(athlete.getId(),
+        athlete.getName(),
+        athlete.getSportType(),
+        athlete.getTournaments().stream().map(Tournament::getId).toList(),
+        athlete.getAge(), athlete.getWeight(), athlete.getHeight());
   }
 }
