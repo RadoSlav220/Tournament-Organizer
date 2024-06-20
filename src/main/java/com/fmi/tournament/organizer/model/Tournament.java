@@ -10,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -48,6 +50,11 @@ public abstract class Tournament {
   private int capacity;
 
   @ManyToMany
+  @JoinTable(
+      name="tournament_participants",
+      joinColumns = @JoinColumn(name = "tournament_id"),
+      inverseJoinColumns = @JoinColumn(name = "participant_id")
+  )
   private List<Participant> participants;
 
   @OneToMany

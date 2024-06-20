@@ -39,16 +39,12 @@ public abstract class Participant {
   @Enumerated(EnumType.STRING)
   private SportType sportType;
 
-  @ManyToMany
+  @ManyToMany(mappedBy = "participants")
   private List<Tournament> tournaments;
-
-  @OneToMany
-  private List<Match> matches;
 
   protected Participant(String name, SportType sportType) {
     this.name = name;
     this.sportType = sportType;
     tournaments = new ArrayList<>();
-    matches = new ArrayList<>();
   }
 }

@@ -25,12 +25,11 @@ public class Match {
   @ManyToOne
   private Tournament tournament;
 
-  @ManyToOne
-  private Participant participant1;
+  private UUID homeParticipantID;
 
-  @ManyToOne
-  private Participant participant2;
+  private UUID awayParticipantID;
 
+  @Enumerated(EnumType.STRING)
   private MatchState state;
 
   private int resultParticipant1;

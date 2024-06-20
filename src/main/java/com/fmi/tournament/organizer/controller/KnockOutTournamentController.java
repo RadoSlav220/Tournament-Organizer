@@ -64,4 +64,11 @@ public class KnockOutTournamentController {
     knockOutTournamentService.deleteKnockOutTournamentById(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
+
+  @PostMapping("/{id}/start")
+  public ResponseEntity<KnockOutTournament> startKnockOutTournamentById(@PathVariable UUID id) {
+    Optional<KnockOutTournament> resultTournament = knockOutTournamentService.startTournamentById(id);
+    return resultTournament.map(tournament -> new ResponseEntity<>(tournament, HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  }
 }
