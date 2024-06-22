@@ -1,20 +1,22 @@
 package com.fmi.tournament.organizer.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDate;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
-
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.UUID;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "match")
@@ -26,35 +28,25 @@ public class Match {
   private LocalDate time;
 
   @ManyToOne
-  @JoinColumn(name="tournament_id", nullable=false)
-  @JsonBackReference
+  @JoinColumn(name = "tournament_id", nullable = false)
   private Tournament tournament;
 
-  @ManyToOne
-  @JoinColumn(name="home_participant_id", nullable=false)
-  @JsonBackReference
-  private Participant homeParticipant;
+  private UUID homeParticipantID;
 
-  @ManyToOne
-  @JoinColumn(name="away_participant_id", nullable=false)
-  @JsonBackReference
-  private Participant awayParticipant;
+  private UUID awayParticipantID;
 
-  //@Enumerated(EnumType.STRING)
+  @Enumerated(EnumType.STRING)
   private MatchState state;
 
-  private int resultHomeParticipant;
+  private int homeResult;
 
-  private int resultAwayParticipant;
+  private int awayResult;
 
-  public Match(LocalDate time, Tournament tournament, Participant homeParticipant, Participant awayParticipant,
-               MatchState state, int resultHomeParticipant, int resultAwayParticipant) {
+  public Match(LocalDate time, Tournament tournament, UUID homeParticipantID, UUID awayParticipantID) {
     this.time = time;
     this.tournament = tournament;
-    this.homeParticipant = homeParticipant;
-    this.awayParticipant = awayParticipant;
-    this.state = state;
-    this.resultHomeParticipant = resultHomeParticipant;
-    this.resultAwayParticipant = resultAwayParticipant;
+    this.homeParticipantID = homeParticipantID;
+    this.awayParticipantID = awayParticipantID;
+    state = MatchState.NOT_STARTED;
   }
 }

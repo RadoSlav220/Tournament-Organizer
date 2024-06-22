@@ -1,8 +1,22 @@
 package com.fmi.tournament.organizer.model;
 
 import com.fasterxml.jackson.annotation.*;
-import jakarta.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -41,14 +55,13 @@ public abstract class Tournament {
 
   @ManyToMany
   @JoinTable(
-          name="tournament_participants",
-          joinColumns = @JoinColumn(name = "tournament_id"),
-          inverseJoinColumns = @JoinColumn(name = "participant_id")
+      name="tournament_participants",
+      joinColumns = @JoinColumn(name = "tournament_id"),
+      inverseJoinColumns = @JoinColumn(name = "participant_id")
   )
   private List<Participant> participants;
 
-  @OneToMany(mappedBy="tournament")
-  @JsonManagedReference
+  @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
   private List<Match> matches;
 
   protected Tournament(String name, String description, SportType sportType, int capacity) {

@@ -1,7 +1,9 @@
 package com.fmi.tournament.organizer.service;
 
-import com.fmi.tournament.organizer.dto.TeamDTO;
+import com.fmi.tournament.organizer.dto.TeamCreateDTO;
+import com.fmi.tournament.organizer.dto.TeamResponseDTO;
 import com.fmi.tournament.organizer.model.Team;
+import com.fmi.tournament.organizer.model.Tournament;
 import com.fmi.tournament.organizer.repository.TeamRepository;
 import java.util.List;
 import java.util.Optional;
@@ -18,29 +20,30 @@ public class TeamService {
     this.teamRepository = teamRepository;
   }
 
-  public List<Team> getAllTeams() {
-    return teamRepository.findAll();
+  public List<TeamResponseDTO> getAllTeams() {
+    return teamRepository.findAll().stream().map(this::toResponseDto).toList();
   }
 
-  public Optional<Team> getTeamById(UUID id) {
-    return teamRepository.findById(id);
+  public Optional<TeamResponseDTO> getTeamById(UUID id) {
+    return teamRepository.findById(id).map(this::toResponseDto);
   }
 
-  public Team createTeam(TeamDTO teamDTO) {
+  public TeamResponseDTO createTeam(TeamCreateDTO teamDTO) {
     Team team = new Team(teamDTO.getName(), teamDTO.getSportType(), teamDTO.getEstablishmentYear(), teamDTO.getPlayers(), teamDTO.getManager());
-    return teamRepository.save(team);
+    teamRepository.saveAndFlush(team);
+    return toResponseDto(team);
   }
 
-  public Optional<Team> updateTeamById(UUID id, TeamDTO updatedTeam) {
+  public Optional<TeamResponseDTO> updateTeamById(UUID id, TeamCreateDTO updatedTeam) {
     Optional<Team> currentTeam = teamRepository.findById(id);
-    return currentTeam.flatMap(team -> Optional.of(updateTeamDetails(updatedTeam, team)));
+    return currentTeam.map(team -> toResponseDto(updateTeamDetails(updatedTeam, team)));
   }
 
   public void deleteTeamById(UUID id) {
     teamRepository.deleteById(id);
   }
 
-  private Team updateTeamDetails(TeamDTO updatedTeam, Team currentTeam) {
+  private Team updateTeamDetails(TeamCreateDTO updatedTeam, Team currentTeam) {
     if (updatedTeam.getName() != null) {
       currentTeam.setName(updatedTeam.getName());
     }
@@ -48,7 +51,7 @@ public class TeamService {
       currentTeam.setSportType(updatedTeam.getSportType());
     }
     if (updatedTeam.getEstablishmentYear() != null) {
-      currentTeam.setYear(updatedTeam.getEstablishmentYear());
+      currentTeam.setEstablishmentYear(updatedTeam.getEstablishmentYear());
     }
     if (updatedTeam.getPlayers() != null) {
       currentTeam.setPlayers(updatedTeam.getPlayers());
@@ -56,6 +59,16 @@ public class TeamService {
     if (updatedTeam.getManager() != null) {
       currentTeam.setManager(updatedTeam.getManager());
     }
-    return teamRepository.save(currentTeam);
+    return teamRepository.saveAndFlush(currentTeam);
+  }
+
+  private TeamResponseDTO toResponseDto(Team team) {
+    return new TeamResponseDTO(team.getId(),
+        team.getName(),
+        team.getSportType(),
+        team.getTournaments().stream().map(Tournament::getId).toList(),
+        team.getEstablishmentYear(),
+        team.getPlayers(),
+        team.getManager());
   }
 }

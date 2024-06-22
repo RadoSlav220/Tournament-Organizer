@@ -1,10 +1,10 @@
 package com.fmi.tournament.organizer.controller;
 
-import com.fmi.tournament.organizer.dto.TeamDTO;
+import com.fmi.tournament.organizer.dto.TeamCreateDTO;
+import com.fmi.tournament.organizer.dto.TeamResponseDTO;
 import com.fmi.tournament.organizer.model.Team;
 import com.fmi.tournament.organizer.service.ParticipantService;
 import com.fmi.tournament.organizer.service.TeamService;
-import com.fmi.tournament.organizer.service.TournamentService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -36,26 +36,26 @@ public class TeamController {
   }
 
   @PostMapping
-  public ResponseEntity<Team> createTeam(@RequestBody @Valid TeamDTO team) {
-    Team newTeam = teamService.createTeam(team);
+  public ResponseEntity<TeamResponseDTO> createTeam(@RequestBody @Valid TeamCreateDTO team) {
+    TeamResponseDTO newTeam = teamService.createTeam(team);
     return new ResponseEntity<>(newTeam, HttpStatus.CREATED);
   }
 
   @GetMapping
-  public ResponseEntity<List<Team>> getAllTeams() {
-    List<Team> teams = teamService.getAllTeams();
+  public ResponseEntity<List<TeamResponseDTO>> getAllTeams() {
+    List<TeamResponseDTO> teams = teamService.getAllTeams();
     return new ResponseEntity<>(teams, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Team> getTeamById(@PathVariable UUID id) {
-    Optional<Team> fetchedTeam = teamService.getTeamById(id);
+  public ResponseEntity<TeamResponseDTO> getTeamById(@PathVariable UUID id) {
+    Optional<TeamResponseDTO> fetchedTeam = teamService.getTeamById(id);
     return fetchedTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Team> updateTeamById(@PathVariable UUID id, @RequestBody @Valid TeamDTO updatedTeam) {
-    Optional<Team> resultTeam = teamService.updateTeamById(id, updatedTeam);
+  public ResponseEntity<TeamResponseDTO> updateTeamById(@PathVariable UUID id, @RequestBody @Valid TeamCreateDTO updatedTeam) {
+    Optional<TeamResponseDTO> resultTeam = teamService.updateTeamById(id, updatedTeam);
     return resultTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 

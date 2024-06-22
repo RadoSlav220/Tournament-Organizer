@@ -1,6 +1,7 @@
 package com.fmi.tournament.organizer.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +28,6 @@ import lombok.NoArgsConstructor;
     @JsonSubTypes.Type(value = Team.class, name = "team"),
     @JsonSubTypes.Type(value = Athlete.class, name = "athlete")
 })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public abstract class Participant {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -42,19 +41,9 @@ public abstract class Participant {
   @ManyToMany(mappedBy = "participants")
   private List<Tournament> tournaments;
 
-  @OneToMany(mappedBy="homeParticipant")
-  @JsonManagedReference
-  private List<Match> homeMatches;
-
-  @OneToMany(mappedBy="awayParticipant")
-  @JsonManagedReference
-  private List<Match> awayMatches;
-
   protected Participant(String name, SportType sportType) {
     this.name = name;
     this.sportType = sportType;
     tournaments = new ArrayList<>();
-    homeMatches = new ArrayList<>();
-    awayMatches = new ArrayList<>();
   }
 }

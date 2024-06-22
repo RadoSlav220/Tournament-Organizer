@@ -30,7 +30,7 @@ public class ParticipantService {
 
         Participant participant = participantRepository.findById(participantID).orElseThrow();
         tournament.getParticipants().add(participant);
-        tournamentRepository.save(tournament);
+        tournamentRepository.saveAndFlush(tournament);
     }
 
     public void unregistration(UUID participantID, UUID tournamentID){
@@ -46,6 +46,6 @@ public class ParticipantService {
         }
 
         tournament.getParticipants().remove(participant);
-        tournamentRepository.save(tournament);
+        tournamentRepository.saveAndFlush(tournament);
     }
 }
