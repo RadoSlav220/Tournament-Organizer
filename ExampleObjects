@@ -37,3 +37,26 @@ TeamDTO
     "players": ["Jude", "Kroos", "Vini"]
 }
 
+{
+    "name": "Barcelona",
+    "sportType": "FOOTBALL",
+    "establishmentYear": 1899,
+    "manager": "Pep Guardiola",
+    "players": ["Messi", "Suarez", "Neymar"]
+}
+
+{
+    "name": "Manchester United",
+    "sportType": "FOOTBALL",
+    "establishmentYear": 1899,
+    "manager": "Ten Hag",
+    "players": ["De Gea", "Harry"]
+}
+
+{
+    "name": "Bayern Munich",
+    "sportType": "FOOTBALL",
+    "establishmentYear": 1899,
+    "manager": "Mourinho",
+    "players": ["Muller", "Kane", "Musiala"]
+}

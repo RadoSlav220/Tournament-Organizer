@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -60,8 +61,7 @@ public abstract class Tournament {
   )
   private List<Participant> participants;
 
-  @OneToMany(mappedBy="tournament")
-  @JsonManagedReference
+  @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
   private List<Match> matches;
 
   protected Tournament(String name, String description, SportType sportType, int capacity) {

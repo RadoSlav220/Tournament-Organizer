@@ -77,7 +77,3 @@ public class TeamController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }
-
-// 5161e3a7-ff0d-4b57-89de-cbc3c9b0ea4d -> real
-// 6d4a4bf3-a6e4-4ec5-937c-b0e3163b6dc2 -> barca
-// 2f0a1bd9-2d0a-457d-b4cb-f63574e8a2f1 -> ucl

@@ -2,9 +2,8 @@ package com.fmi.tournament.organizer.controller;
 
 import com.fmi.tournament.organizer.dto.KnockOutTournamentCreateDTO;
 import com.fmi.tournament.organizer.dto.KnockOutTournamentResponseDTO;
-import com.fmi.tournament.organizer.model.KnockOutTournament;
+import com.fmi.tournament.organizer.dto.ScoreDTO;
 import com.fmi.tournament.organizer.service.KnockOutTournamentService;
-import com.fmi.tournament.organizer.service.TournamentService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -27,16 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/knockOutTournament")
 public class KnockOutTournamentController {
   private final KnockOutTournamentService knockOutTournamentService;
-  private final TournamentService tournamentService;
 
   @Autowired
-  public KnockOutTournamentController(KnockOutTournamentService knockOutTournamentService, TournamentService tournamentService) {
-      this.knockOutTournamentService = knockOutTournamentService;
-      this.tournamentService = tournamentService;
+  public KnockOutTournamentController(KnockOutTournamentService knockOutTournamentService) {
+    this.knockOutTournamentService = knockOutTournamentService;
   }
 
   @PostMapping
-  public ResponseEntity<KnockOutTournamentResponseDTO> createKnockOutTournament(@RequestBody @Valid KnockOutTournamentCreateDTO knockOutTournamentCreateDTO) {
+  public ResponseEntity<KnockOutTournamentResponseDTO> createKnockOutTournament(
+      @RequestBody @Valid KnockOutTournamentCreateDTO knockOutTournamentCreateDTO) {
     KnockOutTournamentResponseDTO knockOutTournament = knockOutTournamentService.createKnockOutTournament(knockOutTournamentCreateDTO);
     return new ResponseEntity<>(knockOutTournament, HttpStatus.CREATED);
   }
@@ -56,7 +54,8 @@ public class KnockOutTournamentController {
 
   @PutMapping("/{id}")
   public ResponseEntity<KnockOutTournamentResponseDTO> updateKnockOutTournamentById(@PathVariable UUID id,
-                                                                         @RequestBody @Valid KnockOutTournamentCreateDTO updatedKnockOutTournament) {
+                                                                                    @RequestBody
+                                                                                    @Valid KnockOutTournamentCreateDTO updatedKnockOutTournament) {
     Optional<KnockOutTournamentResponseDTO> resultTournament = knockOutTournamentService.updateKnockOutTournamentById(id, updatedKnockOutTournament);
     return resultTournament.map(tournament -> new ResponseEntity<>(tournament, HttpStatus.OK))
         .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -71,6 +70,15 @@ public class KnockOutTournamentController {
   @PostMapping("/{id}/start")
   public ResponseEntity<KnockOutTournamentResponseDTO> startKnockOutTournamentById(@PathVariable UUID id) {
     Optional<KnockOutTournamentResponseDTO> resultTournament = knockOutTournamentService.startTournamentById(id);
+    return resultTournament.map(tournament -> new ResponseEntity<>(tournament, HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  }
+
+  @PostMapping("/{tournamentId}/matches/{matchId}/play")
+  public ResponseEntity<KnockOutTournamentResponseDTO> playMatch(@PathVariable UUID tournamentId, @PathVariable UUID matchId,
+                                                                 @RequestBody ScoreDTO score) {
+    Optional<KnockOutTournamentResponseDTO> resultTournament = knockOutTournamentService.playMatchById(tournamentId, matchId, score.homeScore(),
+        score.awayScore());
     return resultTournament.map(tournament -> new ResponseEntity<>(tournament, HttpStatus.OK))
         .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }

@@ -5,10 +5,13 @@ import com.fmi.tournament.organizer.dto.KnockOutTournamentResponseDTO;
 import com.fmi.tournament.organizer.exception.InvalidTournamentCapacityException;
 import com.fmi.tournament.organizer.model.KnockOutTournament;
 import com.fmi.tournament.organizer.model.Match;
+import com.fmi.tournament.organizer.model.MatchState;
 import com.fmi.tournament.organizer.model.Participant;
+import com.fmi.tournament.organizer.model.Tournament;
 import com.fmi.tournament.organizer.model.TournamentState;
 import com.fmi.tournament.organizer.repository.KnockOutTournamentRepository;
 import com.fmi.tournament.organizer.repository.MatchRepository;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +44,33 @@ public class KnockOutTournamentService {
     return toResponseDto(knockOutTournament);
   }
 
+  public List<KnockOutTournamentResponseDTO> getAllKnockOutTournaments() {
+    return knockOutTournamentRepository.findAll().stream().map(this::toResponseDto).toList();
+  }
+
+  public Optional<KnockOutTournamentResponseDTO> getKnockOutTournamentById(UUID tournamentId) {
+    return knockOutTournamentRepository.findById(tournamentId).map(this::toResponseDto);
+  }
+
+  public Optional<KnockOutTournamentResponseDTO> updateKnockOutTournamentById(UUID tournamentId, KnockOutTournamentCreateDTO updatedTournament) {
+    Optional<KnockOutTournament> currentTournament = knockOutTournamentRepository.findById(tournamentId);
+    return currentTournament.map(tournament -> toResponseDto(updateTournamentDetails(updatedTournament, tournament)));
+  }
+
+  public void deleteKnockOutTournamentById(UUID id) {
+    knockOutTournamentRepository.deleteById(id);
+  }
+
+  public Optional<KnockOutTournamentResponseDTO> startTournamentById(UUID tournamentId) {
+    Optional<KnockOutTournament> foundTournament = knockOutTournamentRepository.findById(tournamentId);
+    return foundTournament.map(tournament -> toResponseDto(startTournament(tournament)));
+  }
+
+  public Optional<KnockOutTournamentResponseDTO> playMatchById(UUID tournamentId, UUID matchId, int homeScore, int awayScore) {
+    Optional<KnockOutTournament> foundTournament = knockOutTournamentRepository.findById(tournamentId);
+    return foundTournament.map(tournament -> toResponseDto(playMatch(tournament, matchId, homeScore, awayScore)));
+  }
+
   private KnockOutTournamentResponseDTO toResponseDto(KnockOutTournament knockOutTournament) {
     return new KnockOutTournamentResponseDTO(
         knockOutTournament.getId(),
@@ -54,23 +84,6 @@ public class KnockOutTournamentService {
         knockOutTournament.getAdvancedToNextRoundParticipantsIds(),
         knockOutTournament.getYetToPlayParticipantsIds(),
         knockOutTournament.getKnockedOutParticipantsIds());
-  }
-
-  public List<KnockOutTournamentResponseDTO> getAllKnockOutTournaments() {
-    return knockOutTournamentRepository.findAll().stream().map(this::toResponseDto).toList();
-  }
-
-  public Optional<KnockOutTournamentResponseDTO> getKnockOutTournamentById(UUID id) {
-    return knockOutTournamentRepository.findById(id).map(this::toResponseDto);
-  }
-
-  public Optional<KnockOutTournamentResponseDTO> updateKnockOutTournamentById(UUID id, KnockOutTournamentCreateDTO updatedTournament) {
-    Optional<KnockOutTournament> currentTournament = knockOutTournamentRepository.findById(id);
-    return currentTournament.map(tournament -> toResponseDto(updateTournamentDetails(updatedTournament, tournament)));
-  }
-
-  public void deleteKnockOutTournamentById(UUID id) {
-    knockOutTournamentRepository.deleteById(id);
   }
 
   private KnockOutTournament updateTournamentDetails(KnockOutTournamentCreateDTO updatedTournament, KnockOutTournament currentTournament) {
@@ -96,54 +109,96 @@ public class KnockOutTournamentService {
     return knockOutTournamentRepository.saveAndFlush(currentTournament);
   }
 
-  public Optional<KnockOutTournamentResponseDTO> startTournamentById(UUID tournamentId) {
-    Optional<KnockOutTournament> foundTournament = knockOutTournamentRepository.findById(tournamentId);
-    return foundTournament.map(tournament -> toResponseDto(startTournament(tournament)));
+  private KnockOutTournament playMatch(KnockOutTournament tournament, UUID matchId, int homeScore, int awayScore) {
+    Optional<Match> maybeMatch = matchRepository.findById(matchId);
+    if (maybeMatch.isEmpty()) {
+      throw new UnsupportedOperationException("Match does not exist"); // create a special exception for this
+    }
+
+    Match match = maybeMatch.get();
+    if (match.getState() == MatchState.FINISHED) {
+      throw new IllegalArgumentException("This match is already finished."); // create a special exception for this
+    }
+
+    if (!tournament.getMatches().contains(match)) {
+      throw new IllegalArgumentException("This match is not part of this tournament"); // create a special exception for this
+    }
+
+    return processMatchScore(tournament, match, homeScore, awayScore);
   }
 
-//  public Optional<KnockOutTournament> advanceToNextRoundTournamentById(UUID tournamentId) {
-//    Optional<KnockOutTournament> foundTournament = knockOutTournamentRepository.findById(tournamentId);
-//    return foundTournament.flatMap(tournament -> Optional.of(advanceToNextRound(tournament)));
-//  }
+  private KnockOutTournament processMatchScore(KnockOutTournament tournament, Match match, int homeScore, int awayScore) {
+    UUID homeParticipantId = match.getHomeParticipantID();
+    UUID awayParticipantId = match.getAwayParticipantID();
 
-  private KnockOutTournament startTournament(KnockOutTournament knockOutTournament) {
-    List<Participant> participants = knockOutTournament.getParticipants();
+    match.setHomeResult(homeScore);
+    match.setAwayResult(awayScore);
+    match.setState(MatchState.FINISHED);
+
+    tournament.getYetToPlayParticipantsIds().remove(homeParticipantId);
+    tournament.getYetToPlayParticipantsIds().remove(awayParticipantId);
+
+    if (homeScore > awayScore) {
+      tournament.getAdvancedToNextRoundParticipantsIds().add(homeParticipantId);
+      tournament.getKnockedOutParticipantsIds().add(awayParticipantId);
+    } else {
+      tournament.getAdvancedToNextRoundParticipantsIds().add(awayParticipantId);
+      tournament.getKnockedOutParticipantsIds().add(homeParticipantId);
+    }
+
+    if (isRoundOver(tournament)) {
+      advanceTournamentToNextRound(tournament);
+    }
+
+    matchRepository.save(match);
+    knockOutTournamentRepository.saveAndFlush(tournament);
+
+    return tournament;
+  }
+
+  private boolean isRoundOver(KnockOutTournament tournament) {
+    return tournament.getYetToPlayParticipantsIds().isEmpty();
+  }
+
+  private void advanceTournamentToNextRound(KnockOutTournament tournament) {
+    if (tournament.getAdvancedToNextRoundParticipantsIds().size() == 1) {
+      tournament.setState(TournamentState.FINISHED);
+    } else {
+      tournament.setYetToPlayParticipantsIds(tournament.getAdvancedToNextRoundParticipantsIds());
+      tournament.setAdvancedToNextRoundParticipantsIds(Collections.emptyList());
+      scheduleMatches(tournament, tournament.getYetToPlayParticipantsIds());
+    }
+  }
+
+  private KnockOutTournament startTournament(KnockOutTournament tournament) {
+    List<Participant> participants = tournament.getParticipants();
 
     if (participants.size() < 2 || !isPowerOfTwo(participants.size())) {
       throw new UnsupportedOperationException("Not appropriate participants count"); // Create a special exception for this
-    } else if (knockOutTournament.getState() != TournamentState.NOT_STARTED && knockOutTournament.getState() != TournamentState.REGISTRATION) {
+    } else if (tournament.getState() != TournamentState.REGISTRATION) {
       throw new UnsupportedOperationException("Only not started tournaments can be started"); // Create a special exception for this
     }
 
-    List<UUID> yetToPlayParticipantsIds = knockOutTournament.getParticipants().stream().map(Participant::getId).collect(Collectors.toList());
+    List<UUID> yetToPlayParticipantsIds = tournament.getParticipants().stream().map(Participant::getId).collect(Collectors.toList());
 
     Collections.shuffle(yetToPlayParticipantsIds);
-    knockOutTournament.setYetToPlayParticipantsIds(yetToPlayParticipantsIds);
+    tournament.setYetToPlayParticipantsIds(yetToPlayParticipantsIds);
 
-    knockOutTournament.setState(TournamentState.ONGOING);
-    knockOutTournamentRepository.saveAndFlush(knockOutTournament);
+    tournament.setState(TournamentState.ONGOING);
+    scheduleMatches(tournament, yetToPlayParticipantsIds);
+    knockOutTournamentRepository.saveAndFlush(tournament);
 
-    return knockOutTournament;
+    return tournament;
   }
 
-//  private KnockOutTournament advanceToNextRound(KnockOutTournament knockOutTournament) {
-//    if (!knockOutTournament.getYetToPlayParticipants().isEmpty()) {
-//      throw new RoundNotFinishedException("Current round has not finished yet. Cannot advance to next round.");
-//    }
-//
-//    knockOutTournament.getYetToPlayParticipants().addAll(knockOutTournament.getAdvancedToNextRoundParticipants());
-//    knockOutTournament.getAdvancedToNextRoundParticipants().clear();
-//
-//    for (int i = 0; i < knockOutTournament.getYetToPlayParticipants().size() - 1; i += 2) {
-//      Participant participant1 = knockOutTournament.getYetToPlayParticipants().get(i);
-//      Participant participant2 = knockOutTournament.getYetToPlayParticipants().get(i + 1);
-//      Match match = new Match(LocalDate.now(), knockOutTournament, participant1, participant2);
-//      knockOutTournament.getMatches().add(match);
-//    }
-//
-//    return knockOutTournament;
-//  }
-
+  private void scheduleMatches(Tournament tournament, List<UUID> yetToPlayParticipantsIds) {
+    for (int i = 0; i < yetToPlayParticipantsIds.size() - 1; i += 2) {
+      LocalDate matchTime = LocalDate.now();
+      Match match = new Match(matchTime, tournament, yetToPlayParticipantsIds.get(i), yetToPlayParticipantsIds.get(i + 1));
+      tournament.getMatches().add(match);
+      matchRepository.save(match);
+    }
+  }
 
   private boolean isPowerOfTwo(int n) {
     return n > 0 && (n & (n - 1)) == 0;
