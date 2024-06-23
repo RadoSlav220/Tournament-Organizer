@@ -1,6 +1,8 @@
 package com.fmi.tournament.organizer.service;
 
+import com.fmi.tournament.organizer.exception.*;
 import com.fmi.tournament.organizer.model.Participant;
+import com.fmi.tournament.organizer.model.Team;
 import com.fmi.tournament.organizer.model.Tournament;
 import com.fmi.tournament.organizer.model.TournamentState;
 import com.fmi.tournament.organizer.repository.ParticipantRepository;
@@ -12,11 +14,11 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class ParticipantService {
+public class RegistrationService {
     private final TournamentRepository tournamentRepository;
     private final ParticipantRepository participantRepository;
 
-    public ParticipantService(TournamentRepository tournamentRepository, ParticipantRepository participantRepository) {
+    public RegistrationService(TournamentRepository tournamentRepository, ParticipantRepository participantRepository) {
         this.tournamentRepository = tournamentRepository;
         this.participantRepository = participantRepository;
     }
@@ -25,10 +27,25 @@ public class ParticipantService {
         Tournament tournament = tournamentRepository.findById(tournamentID).orElseThrow();
 
         if(tournament.getCapacity() <= tournament.getParticipants().size()){
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is enough participants in tournament!");
+            throw new InvalidTournamentCapacityException("There is enough participants in tournament!");
         }
 
         Participant participant = participantRepository.findById(participantID).orElseThrow();
+
+
+
+        if(!tournament.getState().equals(TournamentState.REGISTRATION)){
+            throw new InvalidTournamentStateException("The tournament is closed for registration of participants!");
+        }
+
+        if(tournament.getSportType() != participant.getSportType()){
+            throw new InvalidParticipantSportTypeException("The tournament is for another sport!");
+        }
+
+        if(tournament.getParticipants().contains(participant)){
+            throw new ParticipantAlreadyRegisteredInTournamentException("Participant is already registered!");
+        }
+
         tournament.getParticipants().add(participant);
         tournamentRepository.saveAndFlush(tournament);
     }
@@ -38,11 +55,11 @@ public class ParticipantService {
         Participant participant = participantRepository.findById(participantID).orElseThrow();
 
         if(!tournament.getState().equals(TournamentState.REGISTRATION)){
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You can only unsubscribe from the tournament while it is in the registration phase!");
+            throw new InvalidTournamentStateException("You can only unsubscribe from the tournament while it is in the registration phase!");
         }
 
         if(!tournament.getParticipants().contains(participant)){
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such participant registered in the tournament");
+            throw new ParticipantIsNotRegisteredInTournamentException("There is no such participant registered in the tournament");
         }
 
         tournament.getParticipants().remove(participant);
