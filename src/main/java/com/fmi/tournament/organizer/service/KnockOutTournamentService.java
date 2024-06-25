@@ -7,11 +7,9 @@ import com.fmi.tournament.organizer.model.KnockOutTournament;
 import com.fmi.tournament.organizer.model.Match;
 import com.fmi.tournament.organizer.model.MatchState;
 import com.fmi.tournament.organizer.model.Participant;
-import com.fmi.tournament.organizer.model.Tournament;
 import com.fmi.tournament.organizer.model.TournamentState;
 import com.fmi.tournament.organizer.repository.KnockOutTournamentRepository;
 import com.fmi.tournament.organizer.repository.MatchRepository;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +22,14 @@ import org.springframework.stereotype.Service;
 public class KnockOutTournamentService {
   private final KnockOutTournamentRepository knockOutTournamentRepository;
   private final MatchRepository matchRepository;
+  private final MatchScheduler matchScheduler;
 
   @Autowired
-  public KnockOutTournamentService(KnockOutTournamentRepository knockOutTournamentRepository, MatchRepository matchRepository) {
+  public KnockOutTournamentService(KnockOutTournamentRepository knockOutTournamentRepository, MatchRepository matchRepository,
+                                   MatchScheduler matchScheduler) {
     this.knockOutTournamentRepository = knockOutTournamentRepository;
     this.matchRepository = matchRepository;
+    this.matchScheduler = matchScheduler;
   }
 
   public KnockOutTournamentResponseDTO createKnockOutTournament(KnockOutTournamentCreateDTO knockOutTournamentCreateDTO) {
@@ -110,6 +111,10 @@ public class KnockOutTournamentService {
   }
 
   private KnockOutTournament playMatch(KnockOutTournament tournament, UUID matchId, int homeScore, int awayScore) {
+    if (homeScore == awayScore) {
+      throw new IllegalArgumentException("Tie matches are not allowed in a Knock Out Tournament.");
+    }
+
     Optional<Match> maybeMatch = matchRepository.findById(matchId);
     if (maybeMatch.isEmpty()) {
       throw new UnsupportedOperationException("Match does not exist"); // create a special exception for this
@@ -166,7 +171,7 @@ public class KnockOutTournamentService {
     } else {
       tournament.setYetToPlayParticipantsIds(tournament.getAdvancedToNextRoundParticipantsIds());
       tournament.setAdvancedToNextRoundParticipantsIds(Collections.emptyList());
-      scheduleMatches(tournament, tournament.getYetToPlayParticipantsIds());
+      matchScheduler.scheduleKnockOutTournamentGames(tournament, tournament.getYetToPlayParticipantsIds());
     }
   }
 
@@ -184,20 +189,11 @@ public class KnockOutTournamentService {
     Collections.shuffle(yetToPlayParticipantsIds);
     tournament.setYetToPlayParticipantsIds(yetToPlayParticipantsIds);
 
+    matchScheduler.scheduleKnockOutTournamentGames(tournament, yetToPlayParticipantsIds);
     tournament.setState(TournamentState.ONGOING);
-    scheduleMatches(tournament, yetToPlayParticipantsIds);
     knockOutTournamentRepository.saveAndFlush(tournament);
 
     return tournament;
-  }
-
-  private void scheduleMatches(Tournament tournament, List<UUID> yetToPlayParticipantsIds) {
-    for (int i = 0; i < yetToPlayParticipantsIds.size() - 1; i += 2) {
-      LocalDate matchTime = LocalDate.now();
-      Match match = new Match(matchTime, tournament, yetToPlayParticipantsIds.get(i), yetToPlayParticipantsIds.get(i + 1));
-      tournament.getMatches().add(match);
-      matchRepository.save(match);
-    }
   }
 
   private boolean isPowerOfTwo(int n) {

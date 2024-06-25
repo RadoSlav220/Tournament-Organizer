@@ -1,7 +1,5 @@
 package com.fmi.tournament.organizer.model;
 
-import com.fasterxml.jackson.annotation.*;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.CascadeType;
@@ -34,8 +32,9 @@ import lombok.Setter;
     property = "type")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = KnockOutTournament.class, name = "knockOutTournament"),
+    @JsonSubTypes.Type(value = League.class, name = "league")
 })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public abstract class Tournament {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -55,7 +54,7 @@ public abstract class Tournament {
 
   @ManyToMany
   @JoinTable(
-      name="tournament_participants",
+      name = "tournament_participants",
       joinColumns = @JoinColumn(name = "tournament_id"),
       inverseJoinColumns = @JoinColumn(name = "participant_id")
   )
