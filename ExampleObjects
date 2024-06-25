@@ -27,6 +27,15 @@ KnockOutTournamentDTO
 }
 
 
+LeagueCreateDTO
+{
+    "name": "La liga",
+    "description": "Spanish first division",
+    "sportType": "FOOTBALL",
+    "capacity": 20
+}
+
+
 TeamDTO
 
 {
