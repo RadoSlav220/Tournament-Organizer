@@ -36,6 +36,9 @@ public abstract class Participant {
   private String name;
 
   @Enumerated(EnumType.STRING)
+  private Categorize categorize;
+
+  @Enumerated(EnumType.STRING)
   private SportType sportType;
 
   @ManyToMany(mappedBy = "participants")
@@ -45,5 +48,9 @@ public abstract class Participant {
     this.name = name;
     this.sportType = sportType;
     tournaments = new ArrayList<>();
+  }
+
+  public String getObjectType(){
+    return this.getClass().getSimpleName();
   }
 }

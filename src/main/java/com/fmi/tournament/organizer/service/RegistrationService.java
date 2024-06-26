@@ -1,10 +1,7 @@
 package com.fmi.tournament.organizer.service;
 
 import com.fmi.tournament.organizer.exception.*;
-import com.fmi.tournament.organizer.model.Participant;
-import com.fmi.tournament.organizer.model.Team;
-import com.fmi.tournament.organizer.model.Tournament;
-import com.fmi.tournament.organizer.model.TournamentState;
+import com.fmi.tournament.organizer.model.*;
 import com.fmi.tournament.organizer.repository.ParticipantRepository;
 import com.fmi.tournament.organizer.repository.TournamentRepository;
 import org.springframework.http.HttpStatus;
@@ -32,9 +29,16 @@ public class RegistrationService {
 
         Participant participant = participantRepository.findById(participantID).orElseThrow();
 
+        if(!(participant.getObjectType().equals("Athlete") && tournament.getType() == TournamentType.Individual) ||
+                !(participant.getObjectType().equals("Team") && tournament.getType() == TournamentType.Team)){
+            throw new InvalidTournamentTypeException("The tournament type and participant type do not the same!");
+        }
 
+        if(tournament.getCategorize() != participant.getCategorize()){
+            throw new InvalidCategorizeException("Tournament is for another categorize!");
+        }
 
-        if(!tournament.getState().equals(TournamentState.REGISTRATION)){
+        if(tournament.getState() != TournamentState.REGISTRATION){
             throw new InvalidTournamentStateException("The tournament is closed for registration of participants!");
         }
 

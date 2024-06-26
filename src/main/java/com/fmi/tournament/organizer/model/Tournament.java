@@ -51,6 +51,12 @@ public abstract class Tournament {
   @Enumerated(EnumType.STRING)
   private TournamentState state;
 
+  @Enumerated(EnumType.STRING)
+  private TournamentType type;
+
+  @Enumerated(EnumType.STRING)
+  private Categorize categorize;
+
   private int capacity;
 
   @ManyToMany
@@ -63,6 +69,7 @@ public abstract class Tournament {
 
   @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
   private List<Match> matches;
+
 
   protected Tournament(String name, String description, SportType sportType, int capacity) {
     this.name = name;
