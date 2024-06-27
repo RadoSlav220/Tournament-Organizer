@@ -36,14 +36,22 @@ public abstract class Participant {
   private String name;
 
   @Enumerated(EnumType.STRING)
+  private Category category;
+
+  @Enumerated(EnumType.STRING)
   private SportType sportType;
 
   @ManyToMany(mappedBy = "participants")
   private List<Tournament> tournaments;
 
-  protected Participant(String name, SportType sportType) {
+  protected Participant(String name, SportType sportType, Category category) {
     this.name = name;
     this.sportType = sportType;
+    this.category = category;
     tournaments = new ArrayList<>();
+  }
+
+  public String getObjectType(){
+    return this.getClass().getSimpleName();
   }
 }

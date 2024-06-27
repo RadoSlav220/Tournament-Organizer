@@ -23,8 +23,8 @@ public class KnockOutTournament extends Tournament {
   @ElementCollection
   private List<UUID> knockedOutParticipantsIds;
 
-  public KnockOutTournament(String name, String description, SportType sportType, int capacity) {
-    super(name, description, sportType, capacity);
+  public KnockOutTournament(String name, String description, SportType sportType, Category category, int capacity) {
+    super(name, description, sportType, category, capacity);
     this.advancedToNextRoundParticipantsIds = new ArrayList<>();
     this.yetToPlayParticipantsIds = new ArrayList<>();
     this.knockedOutParticipantsIds = new ArrayList<>();

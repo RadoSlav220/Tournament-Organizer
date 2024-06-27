@@ -50,6 +50,12 @@ public abstract class Tournament {
   @Enumerated(EnumType.STRING)
   private TournamentState state;
 
+  @Enumerated(EnumType.STRING)
+  private TournamentType type;
+
+  @Enumerated(EnumType.STRING)
+  private Category category;
+
   private int capacity;
 
   @ManyToMany
@@ -63,12 +69,14 @@ public abstract class Tournament {
   @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
   private List<Match> matches;
 
-  protected Tournament(String name, String description, SportType sportType, int capacity) {
+
+  protected Tournament(String name, String description, SportType sportType, Category category, int capacity) {
     this.name = name;
     this.description = description;
     this.sportType = sportType;
     this.state = TournamentState.REGISTRATION;
     this.capacity = capacity;
+    this.category = category;
     this.participants = new ArrayList<>();
     this.matches = new ArrayList<>();
   }

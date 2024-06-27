@@ -1,5 +1,6 @@
 package com.fmi.tournament.organizer.dto;
 
+import com.fmi.tournament.organizer.model.Category;
 import com.fmi.tournament.organizer.model.SportType;
 import java.util.List;
 import java.util.UUID;
@@ -15,9 +16,9 @@ public class TeamResponseDTO extends ParticipantResponseDTO {
   private List<String> players;
   private String manager;
 
-  public TeamResponseDTO(UUID id, String name, SportType sportType,
+  public TeamResponseDTO(UUID id, String name, SportType sportType, Category category,
                          List<UUID> tournamentsIds, int establishmentYear, List<String> players, String manager) {
-    super(id, name, sportType, tournamentsIds);
+    super(id, name, sportType, category, tournamentsIds);
     this.establishmentYear = establishmentYear;
     this.players = players;
     this.manager = manager;
