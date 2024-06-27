@@ -1,5 +1,6 @@
 package com.fmi.tournament.organizer.dto;
 
+import com.fmi.tournament.organizer.model.Category;
 import com.fmi.tournament.organizer.model.SportType;
 import com.fmi.tournament.organizer.model.TournamentState;
 import jakarta.persistence.ElementCollection;
@@ -17,11 +18,11 @@ public class KnockOutTournamentResponseDTO extends TournamentResponseDTO{
   private List<UUID> yetToPlayParticipantsIds;
   private List<UUID> knockedOutParticipantsIds;
 
-  public KnockOutTournamentResponseDTO(UUID id, String name, String description, SportType sportType,
+  public KnockOutTournamentResponseDTO(UUID id, String name, String description, SportType sportType, Category category,
                                        TournamentState state, int capacity, List<UUID> participantsIds,
                                        List<UUID> matchesIds, List<UUID> advancedToNextRoundParticipantsIds,
                                        List<UUID> yetToPlayParticipantsIds, List<UUID> knockedOutParticipantsIds) {
-    super(id, name, description, sportType, state, capacity, participantsIds, matchesIds);
+    super(id, name, description, sportType, category, state, capacity, participantsIds, matchesIds);
     this.advancedToNextRoundParticipantsIds = advancedToNextRoundParticipantsIds;
     this.yetToPlayParticipantsIds = yetToPlayParticipantsIds;
     this.knockedOutParticipantsIds = knockedOutParticipantsIds;

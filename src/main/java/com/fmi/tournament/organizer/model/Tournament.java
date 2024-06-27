@@ -55,7 +55,7 @@ public abstract class Tournament {
   private TournamentType type;
 
   @Enumerated(EnumType.STRING)
-  private Categorize categorize;
+  private Category category;
 
   private int capacity;
 
@@ -71,12 +71,13 @@ public abstract class Tournament {
   private List<Match> matches;
 
 
-  protected Tournament(String name, String description, SportType sportType, int capacity) {
+  protected Tournament(String name, String description, SportType sportType, Category category, int capacity) {
     this.name = name;
     this.description = description;
     this.sportType = sportType;
     this.state = TournamentState.REGISTRATION;
     this.capacity = capacity;
+    this.category = category;
     this.participants = new ArrayList<>();
     this.matches = new ArrayList<>();
   }

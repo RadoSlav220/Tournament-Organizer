@@ -1,5 +1,6 @@
 package com.fmi.tournament.organizer.dto;
 
+import com.fmi.tournament.organizer.model.Category;
 import com.fmi.tournament.organizer.model.SportType;
 import com.fmi.tournament.organizer.model.TournamentState;
 import java.util.List;
@@ -14,6 +15,7 @@ public class TournamentResponseDTO {
   private String name;
   private String description;
   private SportType sportType;
+  private Category category;
   private TournamentState state;
   private int capacity;
   private List<UUID> participantsIds;

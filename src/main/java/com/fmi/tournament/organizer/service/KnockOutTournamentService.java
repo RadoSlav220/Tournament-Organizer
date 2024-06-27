@@ -39,6 +39,7 @@ public class KnockOutTournamentService {
     KnockOutTournament knockOutTournament =
         new KnockOutTournament(knockOutTournamentCreateDTO.getName(), knockOutTournamentCreateDTO.getDescription(),
             knockOutTournamentCreateDTO.getSportType(),
+            knockOutTournamentCreateDTO.getCategory(),
             knockOutTournamentCreateDTO.getCapacity());
     knockOutTournamentRepository.saveAndFlush(knockOutTournament);
     return toResponseDto(knockOutTournament);
@@ -77,6 +78,7 @@ public class KnockOutTournamentService {
         knockOutTournament.getName(),
         knockOutTournament.getDescription(),
         knockOutTournament.getSportType(),
+        knockOutTournament.getCategory(),
         knockOutTournament.getState(),
         knockOutTournament.getCapacity(),
         knockOutTournament.getParticipants().stream().map(Participant::getId).toList(),

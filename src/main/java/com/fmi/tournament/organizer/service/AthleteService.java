@@ -31,7 +31,7 @@ public class AthleteService {
   public AthleteResponseDTO createAthlete(AthleteCreateDTO athleteCreateDTO) {
     Athlete athlete =
         new Athlete(athleteCreateDTO.getName(), athleteCreateDTO.getSportType(), athleteCreateDTO.getAge(), athleteCreateDTO.getWeight(),
-            athleteCreateDTO.getHeight());
+            athleteCreateDTO.getHeight(), athleteCreateDTO.getCategory());
     athleteRepository.saveAndFlush(athlete);
     return toResponseDto(athlete);
   }
@@ -68,6 +68,7 @@ public class AthleteService {
     return new AthleteResponseDTO(athlete.getId(),
         athlete.getName(),
         athlete.getSportType(),
+        athlete.getCategory(),
         athlete.getTournaments().stream().map(Tournament::getId).toList(),
         athlete.getAge(), athlete.getWeight(), athlete.getHeight());
   }

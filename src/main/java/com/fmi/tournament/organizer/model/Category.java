@@ -1,6 +1,6 @@
 package com.fmi.tournament.organizer.model;
 
-public enum Categorize {
+public enum Category {
     Amateur,
     Professional
 }

@@ -29,7 +29,7 @@ public class TeamService {
   }
 
   public TeamResponseDTO createTeam(TeamCreateDTO teamDTO) {
-    Team team = new Team(teamDTO.getName(), teamDTO.getSportType(), teamDTO.getEstablishmentYear(), teamDTO.getPlayers(), teamDTO.getManager());
+    Team team = new Team(teamDTO.getName(), teamDTO.getSportType(), teamDTO.getEstablishmentYear(), teamDTO.getPlayers(), teamDTO.getManager(), teamDTO.getCategory());
     teamRepository.saveAndFlush(team);
     return toResponseDto(team);
   }
@@ -66,6 +66,7 @@ public class TeamService {
     return new TeamResponseDTO(team.getId(),
         team.getName(),
         team.getSportType(),
+        team.getCategory(),
         team.getTournaments().stream().map(Tournament::getId).toList(),
         team.getEstablishmentYear(),
         team.getPlayers(),

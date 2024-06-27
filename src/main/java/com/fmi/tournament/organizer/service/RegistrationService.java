@@ -34,8 +34,8 @@ public class RegistrationService {
             throw new InvalidTournamentTypeException("The tournament type and participant type do not the same!");
         }
 
-        if(tournament.getCategorize() != participant.getCategorize()){
-            throw new InvalidCategorizeException("Tournament is for another categorize!");
+        if(tournament.getCategory() != participant.getCategory()){
+            throw new InvalidCategoryException("Tournament is for another categorize!");
         }
 
         if(tournament.getState() != TournamentState.REGISTRATION){
