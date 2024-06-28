@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,11 +26,11 @@ public class SecurityConfiguration {
   private static final String ORGANIZER_ROLE = "ORGANIZER";
   private static final String ADMIN_ROLE = "ADMIN";
 
-  private final BaseUserDetailsService baseUserDetailsService;
+  private final AuthUserDetailsService authUserDetailsService;
 
   @Autowired
-  public SecurityConfiguration(BaseUserDetailsService baseUserDetailsService) {
-    this.baseUserDetailsService = baseUserDetailsService;
+  public SecurityConfiguration(AuthUserDetailsService authUserDetailsService) {
+    this.authUserDetailsService = authUserDetailsService;
   }
 
   @Bean
@@ -74,14 +73,14 @@ public class SecurityConfiguration {
   @Bean
   public AuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-    daoAuthenticationProvider.setUserDetailsService(baseUserDetailsService);
+    daoAuthenticationProvider.setUserDetailsService(authUserDetailsService);
     daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
     return daoAuthenticationProvider;
   }
 
   @Bean
-  public UserDetailsService userDetailsService() {
-    return baseUserDetailsService;
+  public org.springframework.security.core.userdetails.UserDetailsService userDetailsService() {
+    return authUserDetailsService;
   }
 
   @Bean

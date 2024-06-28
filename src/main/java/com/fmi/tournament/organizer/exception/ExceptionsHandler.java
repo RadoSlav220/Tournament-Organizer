@@ -1,5 +1,6 @@
 package com.fmi.tournament.organizer.exception;
 
+import java.util.NoSuchElementException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +25,18 @@ public class ExceptionsHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unique constraint violation: " + e.getMessage());
   }
 
-  @ExceptionHandler(TournamentNotFoundException.class)
-  public ResponseEntity<String> handleTournamentNotFoundException(TournamentNotFoundException e) {
+  @ExceptionHandler(NoSuchElementException.class)
+  public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
   }
 
-  @ExceptionHandler(TournamentForbiddenException.class)
-  public ResponseEntity<String> handleTournamentForbiddenException(TournamentForbiddenException e) {
+  @ExceptionHandler(ForbiddenActionException.class)
+  public ResponseEntity<String> handleForbiddenActionException(ForbiddenActionException e) {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+  }
+
+  @ExceptionHandler(RegistrationException.class)
+  public ResponseEntity<String> handleRegistrationException(RegistrationException e) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
   }
 }

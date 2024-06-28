@@ -1,7 +1,5 @@
 package com.fmi.tournament.organizer.security.model;
 
-import com.fmi.tournament.organizer.model.Tournament;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,10 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseUser implements UserDetails {
+public class AuthUser implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
@@ -37,7 +32,7 @@ public class BaseUser implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  public BaseUser(String username, String password, Role role) {
+  public AuthUser(String username, String password, Role role) {
     this.username = username;
     this.password = password;
     this.role = role;

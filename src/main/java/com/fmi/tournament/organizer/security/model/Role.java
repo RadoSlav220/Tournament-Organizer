@@ -10,13 +10,34 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-  PARTICIPANT(Set.of(Permission.READ_EVERY_TOURNAMENT)),
+  PARTICIPANT(Set.of(
+      Permission.READ_ANY_TOURNAMENT,
+      Permission.CREATE_PARTICIPANT,
+      Permission.READ_PARTICIPANT,
+      Permission.UPDATE_OWNED_PARTICIPANT,
+      Permission.REGISTER_FOR_TOURNAMENT,
+      Permission.UNREGISTER_FROM_TOURNAMENT)
+  ),
 
-  ORGANIZER(Set.of(Permission.CREATE_TOURNAMENT, Permission.READ_OWNED_TOURNAMENT,
-      Permission.MODIFY_OWNED_TOURNAMENT, Permission.DELETE_OWNED_TOURNAMENT)),
+  ORGANIZER(Set.of(
+      Permission.CREATE_TOURNAMENT,
+      Permission.READ_OWNED_TOURNAMENT,
+      Permission.MODIFY_OWNED_TOURNAMENT,
+      Permission.DELETE_OWNED_TOURNAMENT,
+      Permission.READ_PARTICIPANT)
+  ),
 
-  ADMIN(Set.of(Permission.CREATE_TOURNAMENT, Permission.READ_EVERY_TOURNAMENT,
-      Permission.MODIFY_EVERY_TOURNAMENT, Permission.DELETE_EVERY_TOURNAMENT));
+  ADMIN(Set.of(
+      Permission.CREATE_TOURNAMENT,
+      Permission.READ_ANY_TOURNAMENT,
+      Permission.MODIFY_ANY_TOURNAMENT,
+      Permission.DELETE_ANY_TOURNAMENT,
+      Permission.READ_PARTICIPANT,
+      Permission.UPDATE_ANY_PARTICIPANT,
+      Permission.DELETE_ANY_PARTICIPANT,
+      Permission.READ_ANY_USER,
+      Permission.DELETE_ANY_USER)
+  );
 
   private final Set<Permission> permissions;
 

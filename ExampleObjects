@@ -11,6 +11,7 @@ AthleteDTO
 {
     "name": "Michele",
     "sportType": "TABLE_TENNIS",
+    "category": "PROFESSIONAL",
     "age": 24,
     "weight": 55,
     "height": 168
@@ -23,6 +24,7 @@ KnockOutTournamentDTO
     "name": "UCL",
     "description": "Champions League",
     "sportType": "FOOTBALL",
+    "category": "PROFESSIONAL",
     "capacity": 32
 }
 
@@ -32,7 +34,7 @@ LeagueCreateDTO
     "name": "La liga",
     "description": "Spanish first division",
     "sportType": "FOOTBALL",
-    "tournamentType": "INDIVIDUAL",
+    "tournamentType": "TEAM",
     "category": "PROFESSIONAL",
     "capacity": 20
 }
@@ -43,6 +45,7 @@ TeamDTO
 {
     "name": "Real Madrid",
     "sportType": "FOOTBALL",
+    "category": "PROFESSIONAL",
     "establishmentYear": 1902,
     "manager": "Carlo Anchelotti",
     "players": ["Jude", "Kroos", "Vini"]
@@ -51,6 +54,7 @@ TeamDTO
 {
     "name": "Barcelona",
     "sportType": "FOOTBALL",
+    "category": "PROFESSIONAL",
     "establishmentYear": 1899,
     "manager": "Pep Guardiola",
     "players": ["Messi", "Suarez", "Neymar"]
@@ -59,6 +63,7 @@ TeamDTO
 {
     "name": "Manchester United",
     "sportType": "FOOTBALL",
+    "category": "PROFESSIONAL",
     "establishmentYear": 1899,
     "manager": "Ten Hag",
     "players": ["De Gea", "Harry"]
@@ -67,6 +72,7 @@ TeamDTO
 {
     "name": "Bayern Munich",
     "sportType": "FOOTBALL",
+    "category": "PROFESSIONAL",
     "establishmentYear": 1899,
     "manager": "Mourinho",
     "players": ["Muller", "Kane", "Musiala"]

@@ -1,7 +1,7 @@
 package com.fmi.tournament.organizer.controller;
 
-import com.fmi.tournament.organizer.dto.AthleteResponseDTO;
 import com.fmi.tournament.organizer.dto.AthleteCreateDTO;
+import com.fmi.tournament.organizer.dto.AthleteResponseDTO;
 import com.fmi.tournament.organizer.service.AthleteService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -10,6 +10,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,36 +32,41 @@ public class AthleteController {
 
   @Autowired
   public AthleteController(AthleteService athleteService) {
-      this.athleteService = athleteService;
+    this.athleteService = athleteService;
   }
 
+  @PreAuthorize("hasAuthority('CREATE_PARTICIPANT')")
   @PostMapping
-  public ResponseEntity<AthleteResponseDTO> createAthlete(@RequestBody @Valid AthleteCreateDTO athlete) {
-    AthleteResponseDTO newAthlete = athleteService.createAthlete(athlete);
+  public ResponseEntity<AthleteResponseDTO> createAthlete(@AuthenticationPrincipal UserDetails userDetails,
+                                                          @RequestBody @Valid AthleteCreateDTO athlete) {
+    AthleteResponseDTO newAthlete = athleteService.createAthlete(userDetails, athlete);
     return new ResponseEntity<>(newAthlete, HttpStatus.CREATED);
   }
 
+  @PreAuthorize("hasAuthority('READ_PARTICIPANT')")
   @GetMapping
-  public ResponseEntity<List<AthleteResponseDTO>> getAllAthletes() {
-    List<AthleteResponseDTO> athletes = athleteService.getAllAthletes();
-    return new ResponseEntity<>(athletes, HttpStatus.OK);
+  public List<AthleteResponseDTO> getAllAthletes() {
+    return athleteService.getAllAthletes();
   }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<AthleteResponseDTO> getAthleteById(@PathVariable UUID id) {
-    Optional<AthleteResponseDTO> fetchedAthlete = athleteService.getAthleteById(id);
-    return fetchedAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  @PreAuthorize("hasAuthority('READ_PARTICIPANT')")
+  @GetMapping("/{athleteId}")
+  public AthleteResponseDTO getAthleteById(@PathVariable UUID athleteId) {
+    return athleteService.getAthleteById(athleteId);
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<AthleteResponseDTO> updateAthleteById(@PathVariable UUID id, @RequestBody @Valid AthleteCreateDTO updatedAthlete) {
-    Optional<AthleteResponseDTO> resultAthlete = athleteService.updateAthleteById(id, updatedAthlete);
-    return resultAthlete.map(athlete -> new ResponseEntity<>(athlete, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  @PreAuthorize("hasAuthority('UPDATE_OWNED_PARTICIPANT') || hasAuthority('UPDATE_ANY_PARTICIPANT')")
+  @PutMapping("/{athleteId}")
+  public AthleteResponseDTO updateAthleteById(@AuthenticationPrincipal UserDetails userDetails,
+                                              @PathVariable UUID athleteId,
+                                              @RequestBody @Valid AthleteCreateDTO updatedAthlete) {
+    return athleteService.updateAthleteById(userDetails, athleteId, updatedAthlete);
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteAthleteById(@PathVariable UUID id) {
-    athleteService.deleteAthleteById(id);
+  @PreAuthorize("hasAuthority('DELETE_ANY_PARTICIPANT')")
+  @DeleteMapping("/{athleteId}")
+  public ResponseEntity<Void> deleteAthleteById(@PathVariable UUID athleteId) {
+    athleteService.deleteAthleteById(athleteId);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

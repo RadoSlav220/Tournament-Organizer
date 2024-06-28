@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,9 +29,12 @@ public class TeamService {
     return teamRepository.findById(id).map(this::toResponseDto);
   }
 
-  public TeamResponseDTO createTeam(TeamCreateDTO teamDTO) {
-    Team team = new Team(teamDTO.getName(), teamDTO.getSportType(), teamDTO.getEstablishmentYear(), teamDTO.getPlayers(), teamDTO.getManager(), teamDTO.getCategory());
+  public TeamResponseDTO createTeam(UserDetails userDetails, TeamCreateDTO teamDTO) {
+    Team team = new Team(teamDTO.getName(), userDetails.getUsername(), teamDTO.getSportType(), teamDTO.getEstablishmentYear(), teamDTO.getPlayers(),
+        teamDTO.getManager(), teamDTO.getCategory());
+
     teamRepository.saveAndFlush(team);
+
     return toResponseDto(team);
   }
 
@@ -65,6 +69,7 @@ public class TeamService {
   private TeamResponseDTO toResponseDto(Team team) {
     return new TeamResponseDTO(team.getId(),
         team.getName(),
+        team.getUsername(),
         team.getSportType(),
         team.getCategory(),
         team.getTournaments().stream().map(Tournament::getId).toList(),

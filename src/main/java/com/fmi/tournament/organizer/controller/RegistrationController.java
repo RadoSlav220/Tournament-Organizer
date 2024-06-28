@@ -1,8 +1,9 @@
 package com.fmi.tournament.organizer.controller;
 
 import com.fmi.tournament.organizer.service.RegistrationService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,6 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping("/registration")
 public class RegistrationController {
     private final RegistrationService registrationService;
 
@@ -21,15 +21,15 @@ public class RegistrationController {
         this.registrationService = registrationService;
     }
 
-    @PostMapping("{participantID}/{tournamentID}")
-    public ResponseEntity<Void> register(@PathVariable UUID participantID, @PathVariable UUID tournamentID){
-        registrationService.registration(participantID, tournamentID);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PreAuthorize("hasAuthority('REGISTER_FOR_TOURNAMENT')")
+    @PostMapping("/register/{tournamentID}")
+    public void register(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID tournamentID){
+        registrationService.register(userDetails, tournamentID);
     }
 
-    @PostMapping("un/{participantID}/{tournamentID}")
-    public ResponseEntity<Void> unregister(@PathVariable UUID participantID, @PathVariable UUID tournamentID){
-        registrationService.unregistration(participantID, tournamentID);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PreAuthorize("hasAuthority('UNREGISTER_FROM_TOURNAMENT')")
+    @PostMapping("/unregister/{tournamentID}")
+    public void unregister(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID tournamentID){
+        registrationService.unregister(userDetails, tournamentID);
     }
 }
