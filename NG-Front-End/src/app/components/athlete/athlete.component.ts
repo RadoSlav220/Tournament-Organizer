@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AthleteModel } from '../../model/athelete-model';
 import { AthleteService } from '../../service/athlete.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -29,7 +29,7 @@ export class AthleteComponent implements OnInit {
       'weight': new FormControl(''),
       'sportType': new FormControl(''),
       'category': new FormControl('')
-    })
+    });
   }
   
   @Input()

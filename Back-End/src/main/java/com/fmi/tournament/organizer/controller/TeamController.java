@@ -11,18 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
 @RequestMapping("/teams")
+@CrossOrigin(origins = "http://localhost:4200")
 public class TeamController {
   private final TeamService teamService;
 
@@ -32,32 +26,27 @@ public class TeamController {
   }
 
   @PostMapping
-  public ResponseEntity<TeamResponseDTO> createTeam(@RequestBody @Valid TeamCreateDTO team) {
-    TeamResponseDTO newTeam = teamService.createTeam(team);
-    return new ResponseEntity<>(newTeam, HttpStatus.CREATED);
+  public TeamResponseDTO createTeam(@RequestBody @Valid TeamCreateDTO team) {
+    return teamService.createTeam(team);
   }
 
   @GetMapping
-  public ResponseEntity<List<TeamResponseDTO>> getAllTeams() {
-    List<TeamResponseDTO> teams = teamService.getAllTeams();
-    return new ResponseEntity<>(teams, HttpStatus.OK);
+  public List<TeamResponseDTO> getAllTeams() {
+    return teamService.getAllTeams();
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<TeamResponseDTO> getTeamById(@PathVariable UUID id) {
-    Optional<TeamResponseDTO> fetchedTeam = teamService.getTeamById(id);
-    return fetchedTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  public Optional<TeamResponseDTO> getTeamById(@PathVariable UUID id) {
+    return teamService.getTeamById(id);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<TeamResponseDTO> updateTeamById(@PathVariable UUID id, @RequestBody @Valid TeamCreateDTO updatedTeam) {
-    Optional<TeamResponseDTO> resultTeam = teamService.updateTeamById(id, updatedTeam);
-    return resultTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  public Optional<TeamResponseDTO> updateTeamById(@PathVariable UUID id, @RequestBody @Valid TeamCreateDTO updatedTeam) {
+    return teamService.updateTeamById(id, updatedTeam);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<HttpStatus> deleteTeamById(@PathVariable UUID id) {
+  public void deleteTeamById(@PathVariable UUID id) {
     teamService.deleteTeamById(id);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

@@ -11,6 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AthleteService } from './service/athlete.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { TeamService } from './service/team.service';
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
         provideClientHydration(),
         provideHttpClient(withFetch()),
         AthleteService,
+        TeamService,
         provideAnimationsAsync()
     ],
     bootstrap: [AppComponent],
