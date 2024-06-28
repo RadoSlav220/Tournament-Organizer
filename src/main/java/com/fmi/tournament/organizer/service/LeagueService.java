@@ -10,10 +10,16 @@ import com.fmi.tournament.organizer.model.Participant;
 import com.fmi.tournament.organizer.model.TournamentState;
 import com.fmi.tournament.organizer.repository.LeagueRepository;
 import com.fmi.tournament.organizer.repository.MatchRepository;
+import com.fmi.tournament.organizer.security.AuthenticatedUserUtil;
+import com.fmi.tournament.organizer.security.model.Permission;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,15 +37,30 @@ public class LeagueService {
 
   public LeagueResponseDTO createLeague(LeagueCreateDTO leagueCreateDTO) {
     League league =
-        new League(leagueCreateDTO.getName(), leagueCreateDTO.getDescription(),
-            leagueCreateDTO.getSportType(),
-            leagueCreateDTO.getCapacity());
+        new League(leagueCreateDTO.getName(), leagueCreateDTO.getDescription(), leagueCreateDTO.getSportType(), leagueCreateDTO.getCapacity(),
+            AuthenticatedUserUtil.getCurrentUsername());
+
     leagueRepository.saveAndFlush(league);
+
     return toResponseDto(league);
   }
 
   public List<LeagueResponseDTO> getAllLeagues() {
-    return leagueRepository.findAll().stream().map(this::toResponseDto).toList();
+    Collection<? extends GrantedAuthority> authorities = AuthenticatedUserUtil.getCurrentUserAuthorities();
+
+    if (authorities.contains(new SimpleGrantedAuthority(Permission.READ_ALL_TOURNAMENT.toString()))) {
+      return leagueRepository.findAll().stream()
+          .map(this::toResponseDto)
+          .toList();
+    }
+
+    if (authorities.contains(new SimpleGrantedAuthority(Permission.READ_OWNED_TOURNAMENT.toString()))) {
+      return leagueRepository.findByOrganizer(AuthenticatedUserUtil.getCurrentUsername()).stream()
+          .map(this::toResponseDto)
+          .toList();
+    }
+
+    return Collections.emptyList();
   }
 
   public Optional<LeagueResponseDTO> getLeagueById(UUID leagueId) {
@@ -73,6 +94,7 @@ public class LeagueService {
         league.getSportType(),
         league.getState(),
         league.getCapacity(),
+        league.getOrganizer(),
         league.getParticipants().stream().map(Participant::getId).toList(),
         league.getMatches().stream().map(Match::getId).toList(),
         league.getResults());

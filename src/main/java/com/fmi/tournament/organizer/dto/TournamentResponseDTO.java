@@ -16,6 +16,7 @@ public class TournamentResponseDTO {
   private SportType sportType;
   private TournamentState state;
   private int capacity;
+  private String organizer;
   private List<UUID> participantsIds;
   private List<UUID> matchesIds;
 }

@@ -18,10 +18,10 @@ public class KnockOutTournamentResponseDTO extends TournamentResponseDTO{
   private List<UUID> knockedOutParticipantsIds;
 
   public KnockOutTournamentResponseDTO(UUID id, String name, String description, SportType sportType,
-                                       TournamentState state, int capacity, List<UUID> participantsIds,
+                                       TournamentState state, int capacity, String organizer, List<UUID> participantsIds,
                                        List<UUID> matchesIds, List<UUID> advancedToNextRoundParticipantsIds,
                                        List<UUID> yetToPlayParticipantsIds, List<UUID> knockedOutParticipantsIds) {
-    super(id, name, description, sportType, state, capacity, participantsIds, matchesIds);
+    super(id, name, description, sportType, state, capacity, organizer, participantsIds, matchesIds);
     this.advancedToNextRoundParticipantsIds = advancedToNextRoundParticipantsIds;
     this.yetToPlayParticipantsIds = yetToPlayParticipantsIds;
     this.knockedOutParticipantsIds = knockedOutParticipantsIds;

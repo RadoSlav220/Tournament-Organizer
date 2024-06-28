@@ -1,0 +1,16 @@
+package com.fmi.tournament.organizer.security.model;
+
+import lombok.RequiredArgsConstructor;
+
+public enum Permission {
+  CREATE_TOURNAMENT,
+  READ_ALL_TOURNAMENT,
+  READ_OWNED_TOURNAMENT,
+  UPDATE_TOURNAMENT,
+  DELETE_TOURNAMENT,
+  REGISTER_FOR_TOURNAMENT,
+  CREATE_PARTICIPANT,
+  READ_PARTICIPANT,
+  UPDATE_PARTICIPANT,
+  DELETE_PARTICIPANT
+}

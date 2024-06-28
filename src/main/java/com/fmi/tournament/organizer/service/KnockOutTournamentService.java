@@ -10,6 +10,7 @@ import com.fmi.tournament.organizer.model.Participant;
 import com.fmi.tournament.organizer.model.TournamentState;
 import com.fmi.tournament.organizer.repository.KnockOutTournamentRepository;
 import com.fmi.tournament.organizer.repository.MatchRepository;
+import com.fmi.tournament.organizer.security.AuthenticatedUserUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,8 +40,7 @@ public class KnockOutTournamentService {
 
     KnockOutTournament knockOutTournament =
         new KnockOutTournament(knockOutTournamentCreateDTO.getName(), knockOutTournamentCreateDTO.getDescription(),
-            knockOutTournamentCreateDTO.getSportType(),
-            knockOutTournamentCreateDTO.getCapacity());
+            knockOutTournamentCreateDTO.getSportType(), knockOutTournamentCreateDTO.getCapacity(), AuthenticatedUserUtil.getCurrentUsername());
     knockOutTournamentRepository.saveAndFlush(knockOutTournament);
     return toResponseDto(knockOutTournament);
   }
@@ -80,6 +80,7 @@ public class KnockOutTournamentService {
         knockOutTournament.getSportType(),
         knockOutTournament.getState(),
         knockOutTournament.getCapacity(),
+        knockOutTournament.getOrganizer(),
         knockOutTournament.getParticipants().stream().map(Participant::getId).toList(),
         knockOutTournament.getMatches().stream().map(Match::getId).toList(),
         knockOutTournament.getAdvancedToNextRoundParticipantsIds(),

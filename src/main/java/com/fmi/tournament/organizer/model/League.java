@@ -21,8 +21,8 @@ public class League extends Tournament {
   @Column(name = "points")
   Map<UUID, Integer> results;
 
-  public League(String name, String description, SportType sportType, int capacity) {
-    super(name, description, sportType, capacity);
+  public League(String name, String description, SportType sportType, int capacity, String organizer) {
+    super(name, description, sportType, capacity, organizer);
     this.results = new HashMap<>();
   }
 }

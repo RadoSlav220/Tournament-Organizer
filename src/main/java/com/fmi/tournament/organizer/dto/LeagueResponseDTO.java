@@ -16,9 +16,9 @@ public class LeagueResponseDTO extends TournamentResponseDTO {
   private Map<UUID, Integer> results;
 
   public LeagueResponseDTO(UUID id, String name, String description, SportType sportType,
-                           TournamentState state, int capacity, List<UUID> participantsIds,
+                           TournamentState state, int capacity, String organizer, List<UUID> participantsIds,
                            List<UUID> matchesIds, Map<UUID, Integer> results) {
-    super(id, name, description, sportType, state, capacity, participantsIds, matchesIds);
+    super(id, name, description, sportType, state, capacity, organizer, participantsIds, matchesIds);
     this.results = results;
   }
 }
