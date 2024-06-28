@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 public class ExceptionsHandler {
@@ -21,7 +20,17 @@ public class ExceptionsHandler {
   }
 
   @ExceptionHandler(DataIntegrityViolationException.class)
-  public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e, WebRequest request) {
+  public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unique constraint violation: " + e.getMessage());
+  }
+
+  @ExceptionHandler(TournamentNotFoundException.class)
+  public ResponseEntity<String> handleTournamentNotFoundException(TournamentNotFoundException e) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+  }
+
+  @ExceptionHandler(TournamentForbiddenException.class)
+  public ResponseEntity<String> handleTournamentForbiddenException(TournamentForbiddenException e) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
   }
 }

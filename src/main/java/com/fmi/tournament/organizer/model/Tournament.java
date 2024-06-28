@@ -2,7 +2,6 @@ package com.fmi.tournament.organizer.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fmi.tournament.organizer.security.model.BaseUser;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,7 +14,6 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +49,15 @@ public abstract class Tournament {
   @Enumerated(EnumType.STRING)
   private TournamentState state;
 
+  @Enumerated(EnumType.STRING)
+  private TournamentType tournamentType;
+
+  @Enumerated(EnumType.STRING)
+  private Category category;
+
   private int capacity;
+
+  private String organizer;
 
   @ManyToMany
   @JoinTable(
@@ -64,13 +70,14 @@ public abstract class Tournament {
   @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
   private List<Match> matches;
 
-  private String organizer;
-
-  protected Tournament(String name, String description, SportType sportType, int capacity, String organizer) {
+  protected Tournament(String name, String description, SportType sportType, TournamentType tournamentType, Category category, int capacity,
+                       String organizer) {
     this.name = name;
     this.description = description;
     this.sportType = sportType;
+    this.tournamentType = tournamentType;
     this.state = TournamentState.REGISTRATION;
+    this.category = category;
     this.capacity = capacity;
     this.organizer = organizer;
     this.participants = new ArrayList<>();

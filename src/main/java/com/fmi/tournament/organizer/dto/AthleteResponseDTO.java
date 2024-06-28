@@ -1,5 +1,6 @@
 package com.fmi.tournament.organizer.dto;
 
+import com.fmi.tournament.organizer.model.Category;
 import com.fmi.tournament.organizer.model.SportType;
 import java.util.List;
 import java.util.UUID;
@@ -15,9 +16,9 @@ public class AthleteResponseDTO extends ParticipantResponseDTO {
   private int weight;
   private int height;
 
-  public AthleteResponseDTO(UUID id, String name, SportType sportType,
+  public AthleteResponseDTO(UUID id, String name, SportType sportType, Category category,
                             List<UUID> tournamentsIds, int age, int weight, int height) {
-    super(id, name, sportType, tournamentsIds);
+    super(id, name, sportType, category, tournamentsIds);
     this.age = age;
     this.weight = weight;
     this.height = height;

@@ -2,8 +2,6 @@ package com.fmi.tournament.organizer.controller;
 
 import com.fmi.tournament.organizer.dto.TeamCreateDTO;
 import com.fmi.tournament.organizer.dto.TeamResponseDTO;
-import com.fmi.tournament.organizer.model.Team;
-import com.fmi.tournament.organizer.service.ParticipantService;
 import com.fmi.tournament.organizer.service.TeamService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -27,12 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/teams")
 public class TeamController {
   private final TeamService teamService;
-  private final ParticipantService participantService;
 
   @Autowired
-  public TeamController(TeamService teamService, ParticipantService participantService) {
+  public TeamController(TeamService teamService) {
     this.teamService = teamService;
-    this.participantService = participantService;
   }
 
   @PostMapping
@@ -63,17 +59,5 @@ public class TeamController {
   public ResponseEntity<HttpStatus> deleteTeamById(@PathVariable UUID id) {
     teamService.deleteTeamById(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
-
-  @PostMapping("/registration/{teamID}/{tournamentID}")
-  public ResponseEntity<Void> registration(@PathVariable UUID teamID, @PathVariable UUID tournamentID){
-    participantService.registration(teamID, tournamentID);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @PostMapping("/unregistration/{teamID}/{tournamentID}")
-  public ResponseEntity<Void> unregistration(@PathVariable UUID teamID, @PathVariable UUID tournamentID){
-    participantService.unregistration(teamID, tournamentID);
-    return new ResponseEntity<>(HttpStatus.OK);
   }
 }

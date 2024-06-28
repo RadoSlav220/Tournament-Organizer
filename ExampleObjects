@@ -32,6 +32,8 @@ LeagueCreateDTO
     "name": "La liga",
     "description": "Spanish first division",
     "sportType": "FOOTBALL",
+    "tournamentType": "INDIVIDUAL",
+    "category": "PROFESSIONAL",
     "capacity": 20
 }
 
@@ -68,4 +70,19 @@ TeamDTO
     "establishmentYear": 1899,
     "manager": "Mourinho",
     "players": ["Muller", "Kane", "Musiala"]
+}
+
+
+CreateUserDTO
+
+{
+    "username": "org",
+    "password": "1234",
+    "role": "ORGANIZER"
+}
+
+{
+    "username": "admin",
+    "password": "1234",
+    "role": "ADMIN"
 }

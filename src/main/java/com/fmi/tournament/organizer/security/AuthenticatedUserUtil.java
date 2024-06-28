@@ -16,12 +16,4 @@ public class AuthenticatedUserUtil {
     }
     return null;
   }
-
-  public static Collection<? extends GrantedAuthority> getCurrentUserAuthorities() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
-      return userDetails.getAuthorities();
-    }
-    return Collections.emptySet();
-  }
 }

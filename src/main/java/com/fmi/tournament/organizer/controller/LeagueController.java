@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,33 +37,37 @@ public class LeagueController {
 
   @PreAuthorize("hasAuthority('CREATE_TOURNAMENT')")
   @PostMapping
-  public ResponseEntity<LeagueResponseDTO> createLeague(@RequestBody @Valid LeagueCreateDTO leagueCreateDTO) {
-    LeagueResponseDTO league = leagueService.createLeague(leagueCreateDTO);
+  public ResponseEntity<LeagueResponseDTO> createLeague(@AuthenticationPrincipal UserDetails userDetails,
+                                                        @RequestBody @Valid LeagueCreateDTO leagueCreateDTO) {
+    LeagueResponseDTO league = leagueService.createLeague(userDetails, leagueCreateDTO);
     return new ResponseEntity<>(league, HttpStatus.CREATED);
   }
 
+  @PreAuthorize("hasAuthority('READ_EVERY_TOURNAMENT') || hasAuthority('READ_OWNED_TOURNAMENT')")
   @GetMapping
-  public ResponseEntity<List<LeagueResponseDTO>> getAllLeagues() {
-    List<LeagueResponseDTO> leagues = leagueService.getAllLeagues();
+  public ResponseEntity<List<LeagueResponseDTO>> getAllLeagues(@AuthenticationPrincipal UserDetails userDetails) {
+    List<LeagueResponseDTO> leagues = leagueService.getAllLeagues(userDetails);
     return new ResponseEntity<>(leagues, HttpStatus.OK);
   }
 
+  @PreAuthorize("hasAuthority('READ_EVERY_TOURNAMENT') || hasAuthority('READ_OWNED_TOURNAMENT')")
   @GetMapping("/{id}")
-  public ResponseEntity<LeagueResponseDTO> getLeagueById(@PathVariable UUID id) {
-    Optional<LeagueResponseDTO> fetchedLeague = leagueService.getLeagueById(id);
-    return fetchedLeague.map(league -> new ResponseEntity<>(league, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  public LeagueResponseDTO getLeagueById(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID id) {
+    return leagueService.getLeagueById(userDetails, id);
   }
 
+  @PreAuthorize("hasAuthority('MODIFY_EVERY_TOURNAMENT') || hasAuthority('MODIFY_OWNED_TOURNAMENT')")
   @PutMapping("/{id}")
-  public ResponseEntity<LeagueResponseDTO> updateLeagueById(@PathVariable UUID id,
-                                                            @RequestBody @Valid LeagueCreateDTO updatedLeague) {
-    Optional<LeagueResponseDTO> resultLeague = leagueService.updateLeagueById(id, updatedLeague);
-    return resultLeague.map(league -> new ResponseEntity<>(league, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  public LeagueResponseDTO updateLeagueById(@AuthenticationPrincipal UserDetails userDetails,
+                                            @PathVariable UUID id,
+                                            @RequestBody @Valid LeagueCreateDTO updatedLeague) {
+    return leagueService.updateLeagueById(userDetails, id, updatedLeague);
   }
 
+  @PreAuthorize("hasAuthority('DELETE_EVERY_TOURNAMENT') || hasAuthority('DELETE_OWNED_TOURNAMENT')")
   @DeleteMapping("/{id}")
-  public ResponseEntity<HttpStatus> deleteLeagueById(@PathVariable UUID id) {
-    leagueService.deleteLeagueById(id);
+  public ResponseEntity<HttpStatus> deleteLeagueById(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID leagueId) {
+    leagueService.deleteLeagueById(userDetails, leagueId);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 

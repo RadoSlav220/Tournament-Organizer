@@ -10,11 +10,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-  PARTICIPANT(Set.of()),
+  PARTICIPANT(Set.of(Permission.READ_EVERY_TOURNAMENT)),
 
-  ORGANIZER(Set.of(Permission.CREATE_TOURNAMENT, Permission.READ_OWNED_TOURNAMENT)),
+  ORGANIZER(Set.of(Permission.CREATE_TOURNAMENT, Permission.READ_OWNED_TOURNAMENT,
+      Permission.MODIFY_OWNED_TOURNAMENT, Permission.DELETE_OWNED_TOURNAMENT)),
 
-  ADMIN(Set.of(Permission.CREATE_TOURNAMENT, Permission.READ_ALL_TOURNAMENT));
+  ADMIN(Set.of(Permission.CREATE_TOURNAMENT, Permission.READ_EVERY_TOURNAMENT,
+      Permission.MODIFY_EVERY_TOURNAMENT, Permission.DELETE_EVERY_TOURNAMENT));
 
   private final Set<Permission> permissions;
 

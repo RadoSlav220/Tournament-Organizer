@@ -3,6 +3,8 @@ package com.fmi.tournament.organizer.service;
 import com.fmi.tournament.organizer.dto.LeagueCreateDTO;
 import com.fmi.tournament.organizer.dto.LeagueResponseDTO;
 import com.fmi.tournament.organizer.exception.InvalidTournamentCapacityException;
+import com.fmi.tournament.organizer.exception.TournamentForbiddenException;
+import com.fmi.tournament.organizer.exception.TournamentNotFoundException;
 import com.fmi.tournament.organizer.model.League;
 import com.fmi.tournament.organizer.model.Match;
 import com.fmi.tournament.organizer.model.MatchState;
@@ -10,7 +12,6 @@ import com.fmi.tournament.organizer.model.Participant;
 import com.fmi.tournament.organizer.model.TournamentState;
 import com.fmi.tournament.organizer.repository.LeagueRepository;
 import com.fmi.tournament.organizer.repository.MatchRepository;
-import com.fmi.tournament.organizer.security.AuthenticatedUserUtil;
 import com.fmi.tournament.organizer.security.model.Permission;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,27 +37,27 @@ public class LeagueService {
     this.matchScheduler = matchScheduler;
   }
 
-  public LeagueResponseDTO createLeague(LeagueCreateDTO leagueCreateDTO) {
+  public LeagueResponseDTO createLeague(UserDetails userDetails, LeagueCreateDTO leagueCreateDTO) {
     League league =
-        new League(leagueCreateDTO.getName(), leagueCreateDTO.getDescription(), leagueCreateDTO.getSportType(), leagueCreateDTO.getCapacity(),
-            AuthenticatedUserUtil.getCurrentUsername());
+        new League(leagueCreateDTO.getName(), leagueCreateDTO.getDescription(), leagueCreateDTO.getSportType(), leagueCreateDTO.getTournamentType(),
+            leagueCreateDTO.getCategory(), leagueCreateDTO.getCapacity(), userDetails.getUsername());
 
     leagueRepository.saveAndFlush(league);
 
     return toResponseDto(league);
   }
 
-  public List<LeagueResponseDTO> getAllLeagues() {
-    Collection<? extends GrantedAuthority> authorities = AuthenticatedUserUtil.getCurrentUserAuthorities();
+  public List<LeagueResponseDTO> getAllLeagues(UserDetails userDetails) {
+    Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
-    if (authorities.contains(new SimpleGrantedAuthority(Permission.READ_ALL_TOURNAMENT.toString()))) {
+    if (authorities.contains(new SimpleGrantedAuthority(Permission.READ_EVERY_TOURNAMENT.toString()))) {
       return leagueRepository.findAll().stream()
           .map(this::toResponseDto)
           .toList();
     }
 
     if (authorities.contains(new SimpleGrantedAuthority(Permission.READ_OWNED_TOURNAMENT.toString()))) {
-      return leagueRepository.findByOrganizer(AuthenticatedUserUtil.getCurrentUsername()).stream()
+      return leagueRepository.findByOrganizer(userDetails.getUsername()).stream()
           .map(this::toResponseDto)
           .toList();
     }
@@ -63,17 +65,34 @@ public class LeagueService {
     return Collections.emptyList();
   }
 
-  public Optional<LeagueResponseDTO> getLeagueById(UUID leagueId) {
-    return leagueRepository.findById(leagueId).map(this::toResponseDto);
+  public LeagueResponseDTO getLeagueById(UserDetails userDetails, UUID leagueId) {
+    League foundLeague = leagueRepository.findById(leagueId).orElseThrow(() -> new TournamentNotFoundException(leagueId));
+
+    if (isTournamentAccessibleForReading(userDetails, foundLeague)) {
+      return toResponseDto(foundLeague);
+    }
+
+    throw new TournamentForbiddenException(leagueId);
   }
 
-  public Optional<LeagueResponseDTO> updateLeagueById(UUID leagueId, LeagueCreateDTO updatedLeague) {
-    Optional<League> currentLeague = leagueRepository.findById(leagueId);
-    return currentLeague.map(league -> toResponseDto(updateLeagueDetails(updatedLeague, league)));
+  public LeagueResponseDTO updateLeagueById(UserDetails userDetails, UUID leagueId, LeagueCreateDTO updatedLeague) {
+    League currentLeague = leagueRepository.findById(leagueId).orElseThrow(() -> new TournamentNotFoundException(leagueId));
+
+    if (isTournamentAccessibleForModification(userDetails, currentLeague)) {
+      return toResponseDto(updateLeagueDetails(updatedLeague, currentLeague));
+    }
+
+    throw new TournamentForbiddenException(leagueId);
   }
 
-  public void deleteLeagueById(UUID id) {
-    leagueRepository.deleteById(id);
+  public void deleteLeagueById(UserDetails userDetails, UUID leagueId) {
+    League foundLeague = leagueRepository.findById(leagueId).orElseThrow(() -> new TournamentNotFoundException(leagueId));
+
+    if (isTournamentAccessibleForModification(userDetails, foundLeague)) {
+      leagueRepository.deleteById(leagueId);
+    }
+
+    throw new TournamentForbiddenException(leagueId);
   }
 
   public Optional<LeagueResponseDTO> startLeagueById(UUID leagueId) {
@@ -93,11 +112,37 @@ public class LeagueService {
         league.getDescription(),
         league.getSportType(),
         league.getState(),
+        league.getTournamentType(),
+        league.getCategory(),
         league.getCapacity(),
         league.getOrganizer(),
         league.getParticipants().stream().map(Participant::getId).toList(),
         league.getMatches().stream().map(Match::getId).toList(),
         league.getResults());
+  }
+
+  private boolean isTournamentAccessibleForReading(UserDetails userDetails, League league) {
+    Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+
+    return authorities.contains(new SimpleGrantedAuthority(Permission.READ_EVERY_TOURNAMENT.toString())) ||
+        (authorities.contains(new SimpleGrantedAuthority(Permission.READ_OWNED_TOURNAMENT.toString())) &&
+            league.getOrganizer().equals(userDetails.getUsername()));
+  }
+
+  private boolean isTournamentAccessibleForModification(UserDetails userDetails, League league) {
+    Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+
+    return authorities.contains(new SimpleGrantedAuthority(Permission.MODIFY_EVERY_TOURNAMENT.toString())) ||
+        (authorities.contains(new SimpleGrantedAuthority(Permission.MODIFY_OWNED_TOURNAMENT.toString())) &&
+            league.getOrganizer().equals(userDetails.getUsername()));
+  }
+
+  private boolean isTournamentAccessibleForDeletion(UserDetails userDetails, League league) {
+    Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+
+    return authorities.contains(new SimpleGrantedAuthority(Permission.DELETE_EVERY_TOURNAMENT.toString())) ||
+        (authorities.contains(new SimpleGrantedAuthority(Permission.DELETE_OWNED_TOURNAMENT.toString())) &&
+            league.getOrganizer().equals(userDetails.getUsername()));
   }
 
   private League updateLeagueDetails(LeagueCreateDTO updatedLeague, League currentLeague) {
