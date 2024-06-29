@@ -36,13 +36,13 @@ public class RegistrationService {
         .toList();
   }
 
-  public List<Tournament> tournamentForUnregistration(UUID participantID){
-    return tournamentRepository
-        .findAll()
-        .stream()
-        .filter(tournament -> tournament.getState() == TournamentState.REGISTRATION && tournament.getParticipants().contains(participantID))
-        .toList();
-  }
+    public List<Tournament> tournamentForUnregistration(UUID participantID){
+        return participantRepository.findById(participantID)
+                .orElseThrow()
+                .getTournaments()
+                .stream().filter(t -> t.getState() == TournamentState.REGISTRATION)
+                .toList();
+    }
 
     public void register(UserDetails userDetails, UUID tournamentID){
         Tournament tournament = tournamentRepository.findById(tournamentID).orElseThrow(() ->

@@ -17,6 +17,8 @@ import { TournamentService } from './service/tournament.service';
 import { RouterLink, RouterLinkActive, RouterModule, RouterOutlet, provideRouter, withComponentInputBinding } from '@angular/router';
 import { AthleteDetailComponent } from './components/athlete-detail/athlete-detail.component';
 import { MatchModel } from './model/match-model';
+import { TeamDetailComponent } from './components/team-detail/team-detail.component';
+import { TournamentDetailComponent } from './components/tournament-detail/tournament-detail.component';
 
 @NgModule({
     declarations: [
@@ -41,6 +43,8 @@ import { MatchModel } from './model/match-model';
         TeamComponent,
         TournamentComponent,
         AthleteDetailComponent,
+        TeamDetailComponent,
+        TournamentDetailComponent,
         CommonModule,
         RouterModule,
         RouterLink, 

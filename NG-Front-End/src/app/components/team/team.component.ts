@@ -3,11 +3,12 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TeamModel } from '../../model/team-model';
 import { TeamService } from '../../service/team.service';
+import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-team',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterOutlet],
   templateUrl: './team.component.html',
   styleUrl: './team.component.css'
 })
@@ -16,7 +17,7 @@ export class TeamComponent implements OnInit {
   formTeam: FormGroup = new FormGroup({});
   isUpdate: boolean = false;
 
-  constructor(private teamService: TeamService){  }
+  constructor(private teamService: TeamService, private router: Router){  }
   
   ngOnInit(): void {
     this.list();
@@ -77,6 +78,10 @@ export class TeamComponent implements OnInit {
         }
       }
     );
+  }
+
+  detail(id: string){
+    this.router.navigate(['/teamDetail', id]);
   }
 
   delete(id: string){

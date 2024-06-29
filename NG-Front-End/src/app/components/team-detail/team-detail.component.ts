@@ -1,29 +1,28 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AthleteModel } from '../../model/athelete-model';
-import { AthleteService } from '../../service/athlete.service';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { TeamModel } from '../../model/team-model';
 import { TournamentModel } from '../../model/tournament-model';
-import { MatchModel } from '../../model/match-model';
+import { TeamService } from '../../service/team.service';
 
 @Component({
-  selector: 'app-athlete-detail',
+  selector: 'app-team-detail',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterOutlet],
-  templateUrl: './athlete-detail.component.html',
-  styleUrl: './athlete-detail.component.css'
+  templateUrl: './team-detail.component.html',
+  styleUrl: './team-detail.component.css'
 })
-export class AthleteDetailComponent implements OnInit {
+export class TeamDetailComponent {
   id!: string;
-  athlete!: AthleteModel;
-  formAthlete: FormGroup = new FormGroup({});
+  team!: TeamModel;
+  formTeam: FormGroup = new FormGroup({});
   formRegistration: FormGroup = new FormGroup({});
   tournaments: TournamentModel[] = [];
   //listMatches: MatchModel[] = [];
   isRegistration: boolean = true;
 
-  constructor(private athleteService: AthleteService, private route: ActivatedRoute){ 
+  constructor(private teamService: TeamService, private route: ActivatedRoute){ 
 
    }
 
@@ -31,14 +30,13 @@ export class AthleteDetailComponent implements OnInit {
     this.id = this.route.snapshot.paramMap.get('id')!;
     this.get();
     //this.listMatches();
-    this.formAthlete = new FormGroup({
+    this.formTeam = new FormGroup({
       'name': new FormControl(''),
-      'age': new FormControl(''),
-      'height': new FormControl(''),
-      'weight': new FormControl(''),
       'sportType': new FormControl(''),
       'category': new FormControl(''),
-      'tournaments': new FormControl('')
+      'manager': new FormControl(''),
+      'establishmentYear': new FormControl(''),
+      'players': new FormControl('')
     });
     
     this.formRegistration = new FormGroup({
@@ -48,10 +46,10 @@ export class AthleteDetailComponent implements OnInit {
 
   @Input()
   get(){
-    this.athleteService.getAthleteById(this.id).subscribe(
+    this.teamService.getTeamById(this.id).subscribe(
       resp => {
         if(resp){
-          this.athlete = resp;
+          this.team = resp;
         }
       }
     );
@@ -59,7 +57,7 @@ export class AthleteDetailComponent implements OnInit {
 
   @Input()
   listMatches(){
-    this.athleteService.getMatches(this.id) 
+    this.teamService.getMatches(this.id) 
       .subscribe(resp => {
         if(resp){
     //      this.listMatches = resp;
@@ -68,13 +66,13 @@ export class AthleteDetailComponent implements OnInit {
   }
 
   openUpdateModal(){
-    this.formAthlete.patchValue({
-      'name': this.athlete.name,
-      'age': this.athlete.age,
-      'height': this.athlete.height,
-      'weight': this.athlete.weight,
-      'sportType': this.athlete.sportType,
-      'category': this.athlete.category
+    this.formTeam.patchValue({
+      'name': this.team.name,
+      'sportType': this.team.sportType,
+      'category': this.team.category,
+      'manager': this.team.manager,
+      'establishmentYear': this.team.establishmentYear,
+      'players': this.team.players
     });
   }
 
@@ -91,7 +89,7 @@ export class AthleteDetailComponent implements OnInit {
 
   openRegistrationModal(){
     this.isRegistration = true;
-    this.athleteService.getTournamentForRegister(this.id)
+    this.teamService.getTournamentForRegister(this.id)
       .subscribe(resp => {
         if(resp){
           this.tournaments = resp;
@@ -103,7 +101,7 @@ export class AthleteDetailComponent implements OnInit {
   }
 
   register(){
-    this.athleteService.register(this.athlete, this.formRegistration.value.tournament)
+    this.teamService.register(this.team, this.formRegistration.value.tournament)
     .subscribe(resp => {
       if(resp){
         this.tournaments = [];
@@ -115,7 +113,7 @@ export class AthleteDetailComponent implements OnInit {
 
   openUnregistrationModal(){
     this.isRegistration = false;
-    this.athleteService.getTournamentForUnregister(this.id)
+    this.teamService.getTournamentForUnregister(this.id)
       .subscribe(resp => {
         if(resp){
           this.tournaments = resp;
@@ -127,7 +125,7 @@ export class AthleteDetailComponent implements OnInit {
   }
 
   unregister(){
-    this.athleteService.unregister(this.athlete, this.formRegistration.value.tournament)
+    this.teamService.unregister(this.team, this.formRegistration.value.tournament)
     .subscribe(resp => {
       if(resp){
         this.tournaments = [];

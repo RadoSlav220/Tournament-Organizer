@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map, pipe } from 'rxjs';
 import { AthleteModel } from '../model/athelete-model';
-import { TournamentComponent } from '../components/tournament/tournament.component';
 import { TournamentModel } from '../model/tournament-model';
 import { MatchModel } from '../model/match-model';
 
@@ -15,7 +14,7 @@ export class AthleteService {
 
   constructor(private httpClient: HttpClient) {
     this.apiUrl = 'http://localhost:8081/athletes';
-    this.apiUrl2 = 'http://localhost:8081/registration'
+    this.apiUrl2 = 'http://localhost:8081/registration';
    }
 
    getAthletes(): Observable<AthleteModel[]>{
