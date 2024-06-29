@@ -35,8 +35,8 @@ public enum Role {
       Permission.READ_PARTICIPANT,
       Permission.UPDATE_ANY_PARTICIPANT,
       Permission.DELETE_ANY_PARTICIPANT,
-      Permission.READ_ANY_USER,
-      Permission.DELETE_ANY_USER)
+      Permission.READ_ANY_AUTH_USER,
+      Permission.DELETE_ANY_AUTH_USER)
   );
 
   private final Set<Permission> permissions;

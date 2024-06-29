@@ -5,7 +5,6 @@ import com.fmi.tournament.organizer.dto.TeamResponseDTO;
 import com.fmi.tournament.organizer.service.TeamService;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,22 +41,24 @@ public class TeamController {
     return new ResponseEntity<>(newTeam, HttpStatus.CREATED);
   }
 
+  @PreAuthorize("hasAuthority('READ_PARTICIPANT')")
   @GetMapping
-  public ResponseEntity<List<TeamResponseDTO>> getAllTeams() {
-    List<TeamResponseDTO> teams = teamService.getAllTeams();
-    return new ResponseEntity<>(teams, HttpStatus.OK);
+  public List<TeamResponseDTO> getAllTeams() {
+    return teamService.getAllTeams();
   }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<TeamResponseDTO> getTeamById(@PathVariable UUID id) {
-    Optional<TeamResponseDTO> fetchedTeam = teamService.getTeamById(id);
-    return fetchedTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  @PreAuthorize("hasAuthority('READ_PARTICIPANT')")
+  @GetMapping("/{teamId}")
+  public TeamResponseDTO getTeamById(@PathVariable UUID teamId) {
+    return teamService.getTeamById(teamId);
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<TeamResponseDTO> updateTeamById(@PathVariable UUID id, @RequestBody @Valid TeamCreateDTO updatedTeam) {
-    Optional<TeamResponseDTO> resultTeam = teamService.updateTeamById(id, updatedTeam);
-    return resultTeam.map(team -> new ResponseEntity<>(team, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  @PreAuthorize("hasAuthority('UPDATE_OWNED_PARTICIPANT') || hasAuthority('UPDATE_ANY_PARTICIPANT')")
+  @PutMapping("/{teamId}")
+  public TeamResponseDTO updateTeamById(@AuthenticationPrincipal UserDetails userDetails,
+                                        @PathVariable UUID teamId,
+                                        @RequestBody @Valid TeamCreateDTO updatedTeam) {
+    return teamService.updateTeamById(userDetails, teamId, updatedTeam);
   }
 
   @DeleteMapping("/{id}")

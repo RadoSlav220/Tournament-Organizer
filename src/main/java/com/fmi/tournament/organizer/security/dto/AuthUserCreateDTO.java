@@ -1,4 +1,4 @@
-package com.fmi.tournament.organizer.security;
+package com.fmi.tournament.organizer.security.dto;
 
 import com.fmi.tournament.organizer.security.model.Role;
 import com.fmi.tournament.organizer.validation.NotEqual;
