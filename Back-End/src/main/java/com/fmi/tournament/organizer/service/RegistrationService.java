@@ -4,6 +4,7 @@ import com.fmi.tournament.organizer.exception.*;
 import com.fmi.tournament.organizer.model.*;
 import com.fmi.tournament.organizer.repository.ParticipantRepository;
 import com.fmi.tournament.organizer.repository.TournamentRepository;
+import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
