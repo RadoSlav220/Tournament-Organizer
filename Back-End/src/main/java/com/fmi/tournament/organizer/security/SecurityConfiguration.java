@@ -37,7 +37,7 @@ public class SecurityConfiguration {
       registry.anyRequest().authenticated();
     });
     httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-    httpSecurity.formLogin(withDefaults());
+    //httpSecurity.formLogin(withDefaults());
     httpSecurity.httpBasic(withDefaults());
     httpSecurity.csrf(AbstractHttpConfigurer::disable);
     return httpSecurity.build();

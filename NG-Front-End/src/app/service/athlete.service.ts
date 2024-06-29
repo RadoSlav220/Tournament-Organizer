@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map, pipe } from 'rxjs';
 import { AthleteModel } from '../model/athelete-model';
@@ -18,42 +18,92 @@ export class AthleteService {
    }
 
    getAthletes(): Observable<AthleteModel[]>{
-    return this.httpClient.get<AthleteModel[]>(this.apiUrl);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+    
+    return this.httpClient.get<AthleteModel[]>(this.apiUrl, { headers });
    }
 
    getAthleteById(id: string): Observable<AthleteModel>{
-    return this.httpClient.get<AthleteModel>(this.apiUrl + '/' + id);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+    
+    return this.httpClient.get<AthleteModel>(this.apiUrl + '/' + id, { headers });
   }
 
   getMatches(id: string): Observable<MatchModel[]> {
-    return this.httpClient.get<MatchModel[]>(this.apiUrl + '/matches/' + id);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+    
+    return this.httpClient.get<MatchModel[]>(this.apiUrl + '/matches/' + id, { headers });
   }
 
    createAthlete(athlete: AthleteModel): Observable<any>{
-    return this.httpClient.post(this.apiUrl, athlete);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+    
+    return this.httpClient.post(this.apiUrl, athlete, { headers });
    }
 
    updateAthlete(athlete: AthleteModel): Observable<AthleteModel>{
-    return this.httpClient.put<any>(this.apiUrl + '/' + athlete.id, athlete);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+
+    return this.httpClient.put<any>(this.apiUrl + '/' + athlete.id, athlete, { headers });
    }
 
    deleteAthlete(id: string): Observable<any>{
-    return this.httpClient.delete<any>(this.apiUrl + '/' + id);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+    
+    return this.httpClient.delete<any>(this.apiUrl + '/' + id, { headers });
    }
 
    getTournamentForRegister(id: string): Observable<TournamentModel[]>{
-    return this.httpClient.get<TournamentModel[]>(this.apiUrl2 + '/' + id);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+   
+    return this.httpClient.get<TournamentModel[]>(this.apiUrl2 + '/' + id, { headers });
    }
 
    register(athlete: AthleteModel, tournament_id: string): Observable<any>{
-    return this.httpClient.post<any>(this.apiUrl2 + '/' + athlete.id + '/' + tournament_id, athlete);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+    
+    return this.httpClient.post<any>(this.apiUrl2 + '/' + athlete.id + '/' + tournament_id, athlete, { headers });
    }
 
    getTournamentForUnregister(id: string): Observable<TournamentModel[]>{
-    return this.httpClient.get<TournamentModel[]>(this.apiUrl2 + '/un/' + id);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+
+    return this.httpClient.get<TournamentModel[]>(this.apiUrl2 + '/un/' + id, { headers });
    }
 
    unregister(athlete: AthleteModel, tournament_id: string): Observable<any>{
-    return this.httpClient.post<any>(this.apiUrl2 + '/un/' + athlete.id + '/' + tournament_id, athlete);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+    
+    return this.httpClient.post<any>(this.apiUrl2 + '/un/' + athlete.id + '/' + tournament_id, athlete, { headers });
    }
 }

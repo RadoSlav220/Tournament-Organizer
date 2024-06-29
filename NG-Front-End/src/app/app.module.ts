@@ -20,6 +20,11 @@ import { MatchModel } from './model/match-model';
 import { TeamDetailComponent } from './components/team-detail/team-detail.component';
 import { TournamentDetailComponent } from './components/tournament-detail/tournament-detail.component';
 
+
+export function tokenGetter() {
+    return localStorage.getItem('token');
+  }
+
 @NgModule({
     declarations: [
         AppComponent
@@ -30,8 +35,7 @@ import { TournamentDetailComponent } from './components/tournament-detail/tourna
         AthleteService,
         TeamService,
         TournamentService,
-        provideAnimationsAsync(),
-        //provideRouter(appRoutes, withComponentInputBinding())
+        provideAnimationsAsync()
     ],
     bootstrap: [AppComponent],
     imports: [

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TournamentModel } from '../model/tournament-model';
 import { Observable } from 'rxjs';
@@ -14,22 +14,47 @@ export class TournamentService {
   }
 
   getTournaments(): Observable<TournamentModel[]>{
-    return this.httpClient.get<TournamentModel[]>(this.apiUrl);
-    }
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+
+    return this.httpClient.get<TournamentModel[]>(this.apiUrl,{ headers });
+  }
 
    createTournament(tournament: TournamentModel): Observable<any>{
-    return this.httpClient.post(this.apiUrl, tournament);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+
+    return this.httpClient.post(this.apiUrl, tournament, { headers });
    }
 
    updateTournament(tournament: TournamentModel): Observable<any>{
-    return this.httpClient.put<any>(this.apiUrl + '/' + tournament.id, tournament);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+
+    return this.httpClient.put<any>(this.apiUrl + '/' + tournament.id, tournament, { headers });
    }
 
    deleteTournament(id: string): Observable<any>{
-    return this.httpClient.delete<any>(this.apiUrl + '/' + id);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+
+    return this.httpClient.delete<any>(this.apiUrl + '/' + id, { headers });
    }
 
    startTournament(tournament: TournamentModel): Observable<any>{
-      return this.httpClient.post<any>(this.apiUrl + '/' + tournament.id + '/start', tournament);
+    const credentials = btoa(`admin:1234`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${credentials}`
+    });
+    
+      return this.httpClient.post<any>(this.apiUrl + '/' + tournament.id + '/start', tournament, { headers });
    }
 }
