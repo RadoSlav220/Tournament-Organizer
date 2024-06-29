@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,11 +22,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfiguration {
-
-  private static final String PARTICIPANT_ROLE = "PARTICIPANT";
-  private static final String ORGANIZER_ROLE = "ORGANIZER";
-  private static final String ADMIN_ROLE = "ADMIN";
-
   private final AuthUserDetailsService authUserDetailsService;
 
   @Autowired
@@ -47,29 +43,6 @@ public class SecurityConfiguration {
     return httpSecurity.build();
   }
 
-//  @Bean
-//  public UserDetailsService userDetailsService() {
-//    UserDetails participant = User.builder()
-//        .username("participant")
-//        .password(passwordEncoder().encode("1234"))
-//        .roles(PARTICIPANT_ROLE)
-//        .build();
-//
-//    UserDetails organizer = User.builder()
-//        .username("organizer")
-//        .password(passwordEncoder().encode("5678"))
-//        .roles(ORGANIZER_ROLE)
-//        .build();
-//
-//    UserDetails admin = User.builder()
-//        .username("admin")
-//        .password(passwordEncoder().encode("admin"))
-//        .roles(PARTICIPANT_ROLE, ORGANIZER_ROLE, ADMIN_ROLE)
-//        .build();
-//
-//    return new InMemoryUserDetailsManager(participant, organizer, admin);
-//  }
-
   @Bean
   public AuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -79,7 +52,7 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  public org.springframework.security.core.userdetails.UserDetailsService userDetailsService() {
+  public UserDetailsService userDetailsService() {
     return authUserDetailsService;
   }
 
