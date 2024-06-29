@@ -16,9 +16,9 @@ public class TeamResponseDTO extends ParticipantResponseDTO {
   private List<String> players;
   private String manager;
 
-  public TeamResponseDTO(UUID id, String name, SportType sportType, Category category,
+  public TeamResponseDTO(UUID id, String name, String username, SportType sportType, Category category,
                          List<UUID> tournamentsIds, int establishmentYear, List<String> players, String manager) {
-    super(id, name, sportType, category, tournamentsIds);
+    super(id, name, username, sportType, category, tournamentsIds);
     this.establishmentYear = establishmentYear;
     this.players = players;
     this.manager = manager;

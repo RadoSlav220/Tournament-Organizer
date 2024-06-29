@@ -72,11 +72,13 @@ public class MatchScheduler {
 
   private void rotateLists(List<UUID> listHome, List<UUID> listAway, boolean areParticipantsEven) {
     UUID firstHome;
+
     if (areParticipantsEven) {
       firstHome = listHome.remove(1);
     } else {
       firstHome = listHome.removeFirst();
     }
+
     UUID lastAway = listAway.removeLast();
     listAway.addFirst(firstHome);
     listHome.addLast(lastAway);

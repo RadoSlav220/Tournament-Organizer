@@ -14,8 +14,8 @@ public class Athlete extends Participant {
   private int weight;
   private int height;
 
-  public Athlete(String name, SportType sportType, int age, int weight, int height, Category category) {
-    super(name, sportType, category);
+  public Athlete(String name, String username, SportType sportType, int age, int weight, int height, Category category) {
+    super(name, username, sportType, category);
     this.age = age;
     this.weight = weight;
     this.height = height;

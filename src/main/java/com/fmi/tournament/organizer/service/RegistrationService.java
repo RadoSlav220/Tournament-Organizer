@@ -4,14 +4,15 @@ import com.fmi.tournament.organizer.exception.*;
 import com.fmi.tournament.organizer.model.*;
 import com.fmi.tournament.organizer.repository.ParticipantRepository;
 import com.fmi.tournament.organizer.repository.TournamentRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import java.util.NoSuchElementException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
 public class RegistrationService {
+    private static final String TOURNAMENT_NOT_FOUND_ERROR_MESSAGE = "Tournament with id '%s' does not exist.";
     private final TournamentRepository tournamentRepository;
     private final ParticipantRepository participantRepository;
 
@@ -20,53 +21,60 @@ public class RegistrationService {
         this.participantRepository = participantRepository;
     }
 
-    public void registration(UUID participantID, UUID tournamentID){
-        Tournament tournament = tournamentRepository.findById(tournamentID).orElseThrow();
+    public void register(UserDetails userDetails, UUID tournamentID){
+        Tournament tournament = tournamentRepository.findById(tournamentID).orElseThrow(() ->
+            new NoSuchElementException(TOURNAMENT_NOT_FOUND_ERROR_MESSAGE.formatted(tournamentID)));
 
-        if(tournament.getCapacity() <= tournament.getParticipants().size()){
-            throw new InvalidTournamentCapacityException("There is enough participants in tournament!");
+        Participant participant = participantRepository.findByUsername(userDetails.getUsername()).orElseThrow(() ->
+            new RegistrationException("Participant is not created yet."));
+
+        if (tournament.getCapacity() <= tournament.getParticipants().size()){
+            throw new RegistrationException("There is enough participants in tournament!");
         }
 
-        Participant participant = participantRepository.findById(participantID).orElseThrow();
-
-        if(!(participant.getObjectType().equals("Athlete") && tournament.getType() == TournamentType.Individual) ||
-                !(participant.getObjectType().equals("Team") && tournament.getType() == TournamentType.Team)){
-            throw new InvalidTournamentTypeException("The tournament type and participant type do not the same!");
+        if(!(participant.getObjectType().equals("Athlete") && tournament.getTournamentType() == TournamentType.INDIVIDUAL) &&
+                !(participant.getObjectType().equals("Team") && tournament.getTournamentType() == TournamentType.TEAM)){
+            throw new RegistrationException("The tournament type and participant type do not match!");
         }
 
         if(tournament.getCategory() != participant.getCategory()){
-            throw new InvalidCategoryException("Tournament is for another categorize!");
+            throw new RegistrationException("Tournament is for another categorize!");
         }
 
         if(tournament.getState() != TournamentState.REGISTRATION){
-            throw new InvalidTournamentStateException("The tournament is closed for registration of participants!");
+            throw new RegistrationException("The tournament is closed for registration of participants!");
         }
 
         if(tournament.getSportType() != participant.getSportType()){
-            throw new InvalidParticipantSportTypeException("The tournament is for another sport!");
+            throw new RegistrationException("The tournament is for another sport!");
         }
 
         if(tournament.getParticipants().contains(participant)){
-            throw new ParticipantAlreadyRegisteredInTournamentException("Participant is already registered!");
+            throw new RegistrationException("Participant is already registered!");
         }
 
         tournament.getParticipants().add(participant);
+
         tournamentRepository.saveAndFlush(tournament);
     }
 
-    public void unregistration(UUID participantID, UUID tournamentID){
-        Tournament tournament = tournamentRepository.findById(tournamentID).orElseThrow();
-        Participant participant = participantRepository.findById(participantID).orElseThrow();
+    public void unregister(UserDetails userDetails, UUID tournamentID){
+        Tournament tournament = tournamentRepository.findById(tournamentID).orElseThrow(() ->
+            new NoSuchElementException(TOURNAMENT_NOT_FOUND_ERROR_MESSAGE.formatted(tournamentID)));
+
+        Participant participant = participantRepository.findByUsername(userDetails.getUsername()).orElseThrow(() ->
+            new RegistrationException("Participant is not created yet."));
 
         if(!tournament.getState().equals(TournamentState.REGISTRATION)){
-            throw new InvalidTournamentStateException("You can only unsubscribe from the tournament while it is in the registration phase!");
+            throw new RegistrationException("You can only unsubscribe from the tournament while it is in the registration phase!");
         }
 
         if(!tournament.getParticipants().contains(participant)){
-            throw new ParticipantIsNotRegisteredInTournamentException("There is no such participant registered in the tournament");
+            throw new RegistrationException("There is no such participant registered in the tournament");
         }
 
         tournament.getParticipants().remove(participant);
+
         tournamentRepository.saveAndFlush(tournament);
     }
 }

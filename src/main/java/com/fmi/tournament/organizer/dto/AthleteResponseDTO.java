@@ -16,9 +16,9 @@ public class AthleteResponseDTO extends ParticipantResponseDTO {
   private int weight;
   private int height;
 
-  public AthleteResponseDTO(UUID id, String name, SportType sportType, Category category,
+  public AthleteResponseDTO(UUID id, String name, String username, SportType sportType, Category category,
                             List<UUID> tournamentsIds, int age, int weight, int height) {
-    super(id, name, sportType, category, tournamentsIds);
+    super(id, name, username, sportType, category, tournamentsIds);
     this.age = age;
     this.weight = weight;
     this.height = height;
