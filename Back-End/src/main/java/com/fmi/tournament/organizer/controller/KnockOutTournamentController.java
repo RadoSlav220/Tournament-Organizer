@@ -6,17 +6,26 @@ import com.fmi.tournament.organizer.dto.ScoreDTO;
 import com.fmi.tournament.organizer.service.KnockOutTournamentService;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping("/knockOutTournament")
+@RequestMapping("/knockOutTournaments")
 @CrossOrigin(origins = "http://localhost:4200")
 public class KnockOutTournamentController {
   private final KnockOutTournamentService knockOutTournamentService;
@@ -26,43 +35,55 @@ public class KnockOutTournamentController {
     this.knockOutTournamentService = knockOutTournamentService;
   }
 
+  @PreAuthorize("hasAuthority('CREATE_TOURNAMENT')")
   @PostMapping
-  public KnockOutTournamentResponseDTO createKnockOutTournament(
-      @RequestBody @Valid KnockOutTournamentCreateDTO knockOutTournamentCreateDTO) {
-    return knockOutTournamentService.createKnockOutTournament(knockOutTournamentCreateDTO);
+  public ResponseEntity<KnockOutTournamentResponseDTO> createKnockOutTournament(@AuthenticationPrincipal UserDetails userDetails,
+                                                                                @RequestBody
+                                                                                @Valid KnockOutTournamentCreateDTO knockOutTournamentCreateDTO) {
+    KnockOutTournamentResponseDTO knockOutTournament = knockOutTournamentService.createKnockOutTournament(userDetails, knockOutTournamentCreateDTO);
+    return new ResponseEntity<>(knockOutTournament, HttpStatus.CREATED);
   }
 
+  @PreAuthorize("hasAuthority('READ_ANY_TOURNAMENT') || hasAuthority('READ_OWNED_TOURNAMENT')")
   @GetMapping
-  public List<KnockOutTournamentResponseDTO> getAllKnockOutTournaments() {
-    return knockOutTournamentService.getAllKnockOutTournaments();
+  public List<KnockOutTournamentResponseDTO> getAllKnockOutTournaments(@AuthenticationPrincipal UserDetails userDetails) {
+    return knockOutTournamentService.getAllKnockOutTournaments(userDetails);
   }
 
-  @GetMapping("/{id}")
-  public Optional<KnockOutTournamentResponseDTO> getKnockOutTournamentById(@PathVariable UUID id) {
-    return knockOutTournamentService.getKnockOutTournamentById(id);
+  @PreAuthorize("hasAuthority('READ_ANY_TOURNAMENT') || hasAuthority('READ_OWNED_TOURNAMENT')")
+  @GetMapping("/{tournamentId}")
+  public KnockOutTournamentResponseDTO getKnockOutTournamentById(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID tournamentId) {
+    return knockOutTournamentService.getKnockOutTournamentById(userDetails, tournamentId);
   }
 
-  @PutMapping("/{id}")
-  public Optional<KnockOutTournamentResponseDTO> updateKnockOutTournamentById(@PathVariable UUID id,
-                                                                                    @RequestBody
-                                                                                    @Valid KnockOutTournamentCreateDTO updatedKnockOutTournament) {
-    return knockOutTournamentService.updateKnockOutTournamentById(id, updatedKnockOutTournament);
+  @PreAuthorize("hasAuthority('MODIFY_ANY_TOURNAMENT') || hasAuthority('MODIFY_OWNED_TOURNAMENT')")
+  @PutMapping("/{tournamentId}")
+  public KnockOutTournamentResponseDTO updateKnockOutTournamentById(@AuthenticationPrincipal UserDetails userDetails,
+                                                                    @PathVariable UUID tournamentId,
+                                                                    @RequestBody @Valid KnockOutTournamentCreateDTO updatedKnockOutTournament) {
+    return knockOutTournamentService.updateKnockOutTournamentById(userDetails, tournamentId, updatedKnockOutTournament);
   }
 
-  @DeleteMapping("/{id}")
-  public void deleteKnockOutTournamentById(@PathVariable UUID id) {
-    knockOutTournamentService.deleteKnockOutTournamentById(id);
+  @PreAuthorize("hasAuthority('DELETE_ANY_TOURNAMENT') || hasAuthority('DELETE_OWNED_TOURNAMENT')")
+  @DeleteMapping("/{tournamentId}")
+  public ResponseEntity<HttpStatus> deleteKnockOutTournamentById(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID tournamentId) {
+    knockOutTournamentService.deleteKnockOutTournamentById(userDetails, tournamentId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
-  @PostMapping("/{id}/start")
-  public Optional<KnockOutTournamentResponseDTO> startKnockOutTournamentById(@PathVariable UUID id) {
-    return knockOutTournamentService.startTournamentById(id);
+  @PreAuthorize("hasAuthority('MODIFY_ANY_TOURNAMENT') || hasAuthority('MODIFY_OWNED_TOURNAMENT')")
+  @PostMapping("/{tournamentId}/start")
+  public KnockOutTournamentResponseDTO startKnockOutTournamentById(@AuthenticationPrincipal UserDetails userDetails,
+                                                                   @PathVariable UUID tournamentId) {
+    return knockOutTournamentService.startTournamentById(userDetails, tournamentId);
   }
 
+  @PreAuthorize("hasAuthority('MODIFY_ANY_TOURNAMENT') || hasAuthority('MODIFY_OWNED_TOURNAMENT')")
   @PostMapping("/{tournamentId}/matches/{matchId}/play")
-  public Optional<KnockOutTournamentResponseDTO> playMatch(@PathVariable UUID tournamentId, @PathVariable UUID matchId,
-                                                                 @RequestBody ScoreDTO score) {
-    return knockOutTournamentService.playMatchById(tournamentId, matchId, score.homeScore(),
-        score.awayScore());
+  public KnockOutTournamentResponseDTO playMatch(@AuthenticationPrincipal UserDetails userDetails,
+                                                 @PathVariable UUID tournamentId,
+                                                 @PathVariable UUID matchId,
+                                                 @RequestBody ScoreDTO score) {
+    return knockOutTournamentService.playMatchById(userDetails, tournamentId, matchId, score.homeScore(), score.awayScore());
   }
 }

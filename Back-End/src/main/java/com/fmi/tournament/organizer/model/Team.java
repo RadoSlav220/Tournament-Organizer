@@ -19,8 +19,8 @@ public class Team extends Participant {
 
   private String manager;
 
-  public Team(String name, SportType sportType, int establishmentYear, List<String> players, String manager, Category category) {
-    super(name, sportType, category);
+  public Team(String name, String username, SportType sportType, int establishmentYear, List<String> players, String manager, Category category) {
+    super(name, username, sportType, category);
     this.establishmentYear = establishmentYear;
     this.players = players;
     this.manager = manager;

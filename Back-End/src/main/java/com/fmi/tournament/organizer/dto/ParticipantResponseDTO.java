@@ -12,6 +12,7 @@ import lombok.Data;
 public class ParticipantResponseDTO {
   private UUID id;
   private String name;
+  private String username;
   private SportType sportType;
   private Category category;
   private List<UUID> tournamentsIds;

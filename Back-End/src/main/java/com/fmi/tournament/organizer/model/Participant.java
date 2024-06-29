@@ -2,6 +2,7 @@ package com.fmi.tournament.organizer.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -35,6 +36,9 @@ public abstract class Participant {
 
   private String name;
 
+  @Column(unique = true, nullable = false)
+  private String username;
+
   @Enumerated(EnumType.STRING)
   private Category category;
 
@@ -44,14 +48,15 @@ public abstract class Participant {
   @ManyToMany(mappedBy = "participants")
   private List<Tournament> tournaments;
 
-  protected Participant(String name, SportType sportType, Category category) {
+  protected Participant(String name, String username, SportType sportType, Category category) {
     this.name = name;
+    this.username = username;
     this.sportType = sportType;
     this.category = category;
     tournaments = new ArrayList<>();
   }
 
-  public String getObjectType(){
+  public String getObjectType() {
     return this.getClass().getSimpleName();
   }
 }

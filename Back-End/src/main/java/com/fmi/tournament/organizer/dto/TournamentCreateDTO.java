@@ -2,7 +2,7 @@ package com.fmi.tournament.organizer.dto;
 
 import com.fmi.tournament.organizer.model.Category;
 import com.fmi.tournament.organizer.model.SportType;
-import com.fmi.tournament.organizer.model.TournamentState;
+import com.fmi.tournament.organizer.model.TournamentType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +17,9 @@ public abstract class TournamentCreateDTO {
 
   @NotNull(message = "Tournament sport type cannot be null.")
   private SportType sportType;
+
+  @NotNull(message = "Tournament type cannot be null.")
+  private TournamentType tournamentType;
 
   @NotNull(message = "Tournament category cannot be null.")
   private Category category;
