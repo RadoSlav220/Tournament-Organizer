@@ -12,6 +12,11 @@ import { CommonModule } from '@angular/common';
 import { AthleteService } from './service/athlete.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { TeamService } from './service/team.service';
+import { TournamentComponent } from './components/tournament/tournament.component';
+import { TournamentService } from './service/tournament.service';
+import { RouterLink, RouterLinkActive, RouterModule, RouterOutlet, provideRouter, withComponentInputBinding } from '@angular/router';
+import { AthleteDetailComponent } from './components/athlete-detail/athlete-detail.component';
+import { MatchModel } from './model/match-model';
 
 @NgModule({
     declarations: [
@@ -22,7 +27,9 @@ import { TeamService } from './service/team.service';
         provideHttpClient(withFetch()),
         AthleteService,
         TeamService,
-        provideAnimationsAsync()
+        TournamentService,
+        provideAnimationsAsync(),
+        //provideRouter(appRoutes, withComponentInputBinding())
     ],
     bootstrap: [AppComponent],
     imports: [
@@ -32,7 +39,14 @@ import { TeamService } from './service/team.service';
         ReactiveFormsModule,
         AthleteComponent,
         TeamComponent,
-        CommonModule
+        TournamentComponent,
+        AthleteDetailComponent,
+        CommonModule,
+        RouterModule,
+        RouterLink, 
+        RouterOutlet, 
+        RouterLink, 
+        RouterLinkActive
     ]
 })
 export class AppModule { }

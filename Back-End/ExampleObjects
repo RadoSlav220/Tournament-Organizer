@@ -32,6 +32,7 @@ TeamDTO
 {
     "name": "Real Madrid",
     "sportType": "FOOTBALL",
+    "category": "Amateur",
     "establishmentYear": 1902,
     "manager": "Carlo Anchelotti",
     "players": ["Jude", "Kroos", "Vini"]

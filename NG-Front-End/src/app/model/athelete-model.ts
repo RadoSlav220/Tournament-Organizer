@@ -1,3 +1,5 @@
+import { TournamentModel } from "./tournament-model";
+
 export class AthleteModel{
     id: string = '';
     name: string = '';

@@ -107,6 +107,9 @@ public class KnockOutTournamentService {
     if (updatedTournament.getCapacity() != null) {
       currentTournament.setCapacity(updatedTournament.getCapacity());
     }
+    if (updatedTournament.getCategory() != null) {
+      currentTournament.setCategory(updatedTournament.getCategory());
+    }
 
     return knockOutTournamentRepository.saveAndFlush(currentTournament);
   }

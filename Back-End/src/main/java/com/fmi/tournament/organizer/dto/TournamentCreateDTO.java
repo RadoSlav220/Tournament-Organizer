@@ -2,6 +2,7 @@ package com.fmi.tournament.organizer.dto;
 
 import com.fmi.tournament.organizer.model.Category;
 import com.fmi.tournament.organizer.model.SportType;
+import com.fmi.tournament.organizer.model.TournamentState;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -3,12 +3,13 @@ import { AthleteModel } from '../../model/athelete-model';
 import { AthleteService } from '../../service/athlete.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router, RouterOutlet } from '@angular/router';
 
 
 @Component({
   selector: 'app-athlete',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterOutlet],
   templateUrl: './athlete.component.html',
   styleUrl: './athlete.component.css'
 })
@@ -17,7 +18,7 @@ export class AthleteComponent implements OnInit {
   formAthlete: FormGroup = new FormGroup({});
   isUpdate: boolean = false;
 
-  constructor(private athleteService: AthleteService){  }
+constructor(private athleteService: AthleteService, private router: Router){  }
   
   ngOnInit(): void {
     this.list();
@@ -78,6 +79,10 @@ export class AthleteComponent implements OnInit {
         }
       }
     );
+  }
+
+  detail(id: string){
+    this.router.navigate(['/athleteDetail', id]);
   }
 
   delete(id: string){

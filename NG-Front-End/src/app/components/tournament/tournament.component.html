@@ -8,30 +8,36 @@
     </nav>
     
     <div class="col-md-12 p-2">
-        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openNewAthlete()"><div class="fa fa-save">New Athlete</div></button>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openNewTournament()"><div class="fa fa-save">New Tournament</div></button>
         <table class="table mt-2 table-bordered">
             <thead class="table-primary">
               <tr>
                 <th>Name</th>
-                <th>Age</th>
-                <th>Height</th>
-                <th>Weight</th>
+                <th>Description</th>
                 <th>Sport Type</th>
+                <th>State</th>
                 <th>Category</th>
+                <th>Capacity</th>
+                <th>Participants</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of listAthletes">
+              <tr *ngFor="let item of listTournament">
                 <td>{{item.name}}</td>
-                <td>{{item.age}}</td>
-                <td>{{item.height}}</td>
-                <td>{{item.weight}}</td>
+                <td>{{item.description}}</td>
                 <td>{{item.sportType}}</td>
+                <td>{{item.state}}</td>
                 <td>{{item.category}}</td>
+                <td>{{item.capacity}}</td>
+                <td>{{item.participants}}</td>
                
                 <td>
-                    <button type="button" class="btn btn btn-success btn-sm" (click)="detail(item.id)">
+                    <button type="button" class="btn btn-info btn-sm" (click)="startTournament(item)">
+                        <div class="fa fa-trash">Start Tournament</div>
+                    </button>
+                    &nbsp;
+                    <button type="button" class="btn btn btn-success btn-sm">
                         <div class="fa fa-pencil">Detail</div>
                     </button>
                     &nbsp;
@@ -53,12 +59,12 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 *ngIf="!isUpdate" class="modal-title fs-5">New Athlete</h1>
-              <h1 *ngIf="isUpdate" class="modal-title fs-5">Update Athlete</h1>
+              <h1 *ngIf="!isUpdate" class="modal-title fs-5">New Tournament</h1>
+              <h1 *ngIf="isUpdate" class="modal-title fs-5">Update Tournament</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <form [formGroup]="formAthlete">
+              <form [formGroup]="formTournament">
                 <div class="mb-3 row">
                   <label for="name" class="col-sm-2 col-form-label">Name</label>
                   <div class="col-sm-10">
@@ -66,21 +72,9 @@
                   </div>
                 </div>
                 <div class="mb-3 row">
-                  <label for="age" class="col-sm-2 col-form-label">Age</label>
+                  <label for="description" class="col-sm-2 col-form-label">Description</label>
                   <div class="col-sm-10">
-                    <input type="number" id="age" class="form-control" formControlName="age">
-                  </div>
-                </div>
-                <div class="mb-3 row">
-                  <label for="height" class="col-sm-2 col-form-label">Height</label>
-                  <div class="col-sm-10">
-                    <input type="number" id="height" class="form-control" formControlName="height">
-                  </div>
-                </div>
-                <div class="mb-3 row">
-                  <label for="weight" class="col-sm-2 col-form-label">Weight</label>
-                  <div class="col-sm-10">
-                    <input type="number" id="weight" class="form-control" formControlName="weight">
+                    <input type="text" id="description" class="form-control" formControlName="description">
                   </div>
                 </div>
                 <div class="mb-3 row">
@@ -93,7 +87,7 @@
                         <option value="TABLE_TENNIS">Table tennis</option>
                     </select>
                   </div>
-                </div>
+                </div>              
                 <div class="mb-3 row">
                   <label for="category" class="col-sm-2 col-form-label">Category</label>
                   <div class="col-sm-10">
@@ -103,14 +97,21 @@
                     </select>
                   </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="capacity" class="col-sm-2 col-form-label">Capacity</label>
+                    <div class="col-sm-10">
+                      <input type="number" id="capacity" class="form-control" formControlName="capacity">
+                    </div>
+                  </div>
               </form>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-              <button *ngIf="!isUpdate" type="button" class="btn btn-success btn-sm" (click)="newAthlete()">Save</button>
+              <button *ngIf="!isUpdate" type="button" class="btn btn-success btn-sm" (click)="newTournament()">Save</button>
               <button *ngIf="isUpdate" type="button" class="btn btn-warning btn-sm" (click)="update()">Update</button>
             </div>
           </div>
         </div>
       </div>
+
       
