@@ -3,6 +3,7 @@ package com.fmi.tournament.organizer.service;
 import com.fmi.tournament.organizer.dto.LeagueCreateDTO;
 import com.fmi.tournament.organizer.dto.LeagueResponseDTO;
 import com.fmi.tournament.organizer.exception.ForbiddenActionException;
+import com.fmi.tournament.organizer.exception.IllegalActionException;
 import com.fmi.tournament.organizer.exception.InvalidTournamentCapacityException;
 import com.fmi.tournament.organizer.model.League;
 import com.fmi.tournament.organizer.model.Match;
@@ -145,18 +146,21 @@ public class LeagueService {
 
   private League updateLeagueDetails(LeagueCreateDTO updatedLeague, League currentLeague) {
     if (updatedLeague.getCapacity() != null && currentLeague.getParticipants().size() > updatedLeague.getCapacity()) {
-      throw new InvalidTournamentCapacityException("The updated capacity cannot be less than the number of participants already enrolled.");
+      throw new InvalidTournamentCapacityException("The updated capacity cannot be less than the number of participants already registered.");
     }
 
     if (updatedLeague.getName() != null) {
       currentLeague.setName(updatedLeague.getName());
     }
+
     if (updatedLeague.getDescription() != null) {
       currentLeague.setDescription(updatedLeague.getDescription());
     }
+
     if (updatedLeague.getSportType() != null) {
       currentLeague.setSportType(updatedLeague.getSportType());
     }
+
     if (updatedLeague.getCapacity() != null) {
       currentLeague.setCapacity(updatedLeague.getCapacity());
     }
@@ -167,16 +171,16 @@ public class LeagueService {
   private League playMatch(League league, UUID matchId, int homeScore, int awayScore) {
     Optional<Match> maybeMatch = matchRepository.findById(matchId);
     if (maybeMatch.isEmpty()) {
-      throw new UnsupportedOperationException("Match does not exist"); // create a special exception for this
+      throw new NoSuchElementException("Match with id '" + matchId + "' does not exist.");
     }
 
     Match match = maybeMatch.get();
     if (match.getState() == MatchState.FINISHED) {
-      throw new IllegalArgumentException("This match is already finished."); // create a special exception for this
+      throw new IllegalActionException("This match is already finished."); // create a special exception for this
     }
 
     if (!league.getMatches().contains(match)) {
-      throw new IllegalArgumentException("This match is not part of this tournament"); // create a special exception for this
+      throw new IllegalActionException("This match is not part of this tournament."); // create a special exception for this
     }
 
     return processMatchScore(league, match, homeScore, awayScore);
@@ -220,9 +224,9 @@ public class LeagueService {
     List<Participant> participants = league.getParticipants();
 
     if (participants.size() < 2) {
-      throw new UnsupportedOperationException("Not appropriate participants count"); // Create a special exception for this
+      throw new IllegalActionException("League must have at least 2 participants to start.");
     } else if (league.getState() != TournamentState.REGISTRATION) {
-      throw new UnsupportedOperationException("Only not started tournaments can be started"); // Create a special exception for this
+      throw new IllegalActionException("Only not started tournaments can be started.");
     }
 
     participants.forEach(participant -> league.getResults().put(participant.getId(), 0));

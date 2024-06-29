@@ -3,6 +3,7 @@ package com.fmi.tournament.organizer.service;
 import com.fmi.tournament.organizer.dto.KnockOutTournamentCreateDTO;
 import com.fmi.tournament.organizer.dto.KnockOutTournamentResponseDTO;
 import com.fmi.tournament.organizer.exception.ForbiddenActionException;
+import com.fmi.tournament.organizer.exception.IllegalActionException;
 import com.fmi.tournament.organizer.exception.InvalidTournamentCapacityException;
 import com.fmi.tournament.organizer.model.KnockOutTournament;
 import com.fmi.tournament.organizer.model.Match;
@@ -167,12 +168,15 @@ public class KnockOutTournamentService {
     if (updatedTournament.getName() != null) {
       currentTournament.setName(updatedTournament.getName());
     }
+
     if (updatedTournament.getDescription() != null) {
       currentTournament.setDescription(updatedTournament.getDescription());
     }
+
     if (updatedTournament.getSportType() != null) {
       currentTournament.setSportType(updatedTournament.getSportType());
     }
+
     if (updatedTournament.getCapacity() != null) {
       currentTournament.setCapacity(updatedTournament.getCapacity());
     }
@@ -187,16 +191,16 @@ public class KnockOutTournamentService {
 
     Optional<Match> maybeMatch = matchRepository.findById(matchId);
     if (maybeMatch.isEmpty()) {
-      throw new UnsupportedOperationException("Match does not exist"); // create a special exception for this
+      throw new NoSuchElementException("Match with id '" + matchId + "' does not exist.");
     }
 
     Match match = maybeMatch.get();
     if (match.getState() == MatchState.FINISHED) {
-      throw new IllegalArgumentException("This match is already finished."); // create a special exception for this
+      throw new IllegalActionException("This match is already finished.");
     }
 
     if (!tournament.getMatches().contains(match)) {
-      throw new IllegalArgumentException("This match is not part of this tournament"); // create a special exception for this
+      throw new IllegalActionException("This match is not part of this tournament.");
     }
 
     return processMatchScore(tournament, match, homeScore, awayScore);
@@ -249,9 +253,9 @@ public class KnockOutTournamentService {
     List<Participant> participants = tournament.getParticipants();
 
     if (participants.size() < 2 || !isPowerOfTwo(participants.size())) {
-      throw new UnsupportedOperationException("Not appropriate participants count"); // Create a special exception for this
+      throw new IllegalActionException("A knock out tournament must start with 2^n participants.");
     } else if (tournament.getState() != TournamentState.REGISTRATION) {
-      throw new UnsupportedOperationException("Only not started tournaments can be started"); // Create a special exception for this
+      throw new IllegalActionException("Only not started tournaments can be started.");
     }
 
     List<UUID> yetToPlayParticipantsIds = tournament.getParticipants().stream().map(Participant::getId).collect(Collectors.toList());

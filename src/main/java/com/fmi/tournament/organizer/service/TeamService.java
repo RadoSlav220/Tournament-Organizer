@@ -65,18 +65,23 @@ public class TeamService {
     if (updatedTeam.getName() != null) {
       currentTeam.setName(updatedTeam.getName());
     }
+
     if (updatedTeam.getSportType() != null) {
       currentTeam.setSportType(updatedTeam.getSportType());
     }
+
     if (updatedTeam.getEstablishmentYear() != null) {
       currentTeam.setEstablishmentYear(updatedTeam.getEstablishmentYear());
     }
+
     if (updatedTeam.getPlayers() != null) {
       currentTeam.setPlayers(updatedTeam.getPlayers());
     }
+
     if (updatedTeam.getManager() != null) {
       currentTeam.setManager(updatedTeam.getManager());
     }
+
     return teamRepository.saveAndFlush(currentTeam);
   }
 
