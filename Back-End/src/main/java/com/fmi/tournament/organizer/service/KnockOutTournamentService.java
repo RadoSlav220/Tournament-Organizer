@@ -2,6 +2,7 @@ package com.fmi.tournament.organizer.service;
 
 import com.fmi.tournament.organizer.dto.KnockOutTournamentCreateDTO;
 import com.fmi.tournament.organizer.dto.KnockOutTournamentResponseDTO;
+import com.fmi.tournament.organizer.dto.MatchResponseDTO;
 import com.fmi.tournament.organizer.exception.ForbiddenActionException;
 import com.fmi.tournament.organizer.exception.IllegalActionException;
 import com.fmi.tournament.organizer.exception.InvalidTournamentCapacityException;
@@ -17,6 +18,7 @@ import com.fmi.tournament.organizer.security.model.Permission;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -90,6 +92,20 @@ public class KnockOutTournamentService {
     return toResponseDto(foundTournament);
   }
 
+  public List<MatchResponseDTO> getMatches(UserDetails userDetails, UUID tournamentId) {
+    KnockOutTournament foundTournament = knockOutTournamentRepository.findById(tournamentId)
+        .orElseThrow(() -> new NoSuchElementException(TOURNAMENT_NOT_FOUND_ERROR_MESSAGE.formatted(tournamentId)));
+
+    if (!tournamentAccessChecker.isTournamentAccessibleForReading(userDetails, foundTournament)) {
+      throw new ForbiddenActionException(FORBIDDEN_ACTION_ERROR_MESSAGE.formatted(tournamentId));
+    }
+
+    Map<UUID, String> idToParticipantNameMap =
+        foundTournament.getParticipants().stream().collect(Collectors.toMap(Participant::getId, Participant::getName));
+
+    return foundTournament.getMatches().stream().map(match -> toMatchResponseDTO(match, idToParticipantNameMap)).toList();
+  }
+
   public KnockOutTournamentResponseDTO updateKnockOutTournamentById(UserDetails userDetails, UUID tournamentId,
                                                                     KnockOutTournamentCreateDTO updatedTournament) {
     KnockOutTournament currentTournament = knockOutTournamentRepository.findById(tournamentId)
@@ -156,6 +172,16 @@ public class KnockOutTournamentService {
         knockOutTournament.getAdvancedToNextRoundParticipantsIds(),
         knockOutTournament.getYetToPlayParticipantsIds(),
         knockOutTournament.getKnockedOutParticipantsIds());
+  }
+
+  private MatchResponseDTO toMatchResponseDTO(Match match, Map<UUID, String> idToParticipantNameMap) {
+    return new MatchResponseDTO(match.getId(),
+        match.getTime(),
+        idToParticipantNameMap.get(match.getHomeParticipantID()),
+        idToParticipantNameMap.get(match.getAwayParticipantID()),
+        match.getState(),
+        match.getHomeResult(),
+        match.getAwayResult());
   }
 
   private KnockOutTournament updateTournamentDetails(KnockOutTournamentCreateDTO updatedTournament, KnockOutTournament currentTournament) {
