@@ -1,1 +1,41 @@
-<p>tournament-detail works!</p>
+<nav class="navbar" style="background-color: #198755;">
+    <div class="container-fluid">
+      <div class="col-md">
+          <h1 style="color: white;">Tournament Organizer</h1>
+        </div>
+    </div> 
+</nav>
+
+<div class="col-md-12 p-2">
+     <table class="table mt-2 table-bordered">
+        <thead class="table-primary">
+          <tr>
+            <th>Tournament</th>
+            <th>Home</th>
+            <th>Away</th>
+            <th>Result of home</th>
+            <th>Result of away</th>
+            <th>Date</th>
+            <th>State</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of listMatches">
+            <td>{{item.tournament}}</td>
+            <td>{{item.home_participant}}</td>
+            <td>{{item.away_participant}}</td>
+            <td>{{item.home_result}}</td>
+            <td>{{item.away_result}}</td>
+            <td>{{item.date}}</td>
+            <td>{{item.state}}</td>
+           
+            <td>
+                <button *ngIf="item.state=='NOT_STARTED'" type="button" class="btn btn-danger btn-sm" (click)="startMatch(item.id)">
+                    <div class="fa fa-trash">Start Match</div>
+                </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+</div>

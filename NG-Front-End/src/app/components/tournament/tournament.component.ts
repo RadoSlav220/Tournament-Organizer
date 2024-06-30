@@ -3,7 +3,7 @@ import { TournamentModel } from '../../model/tournament-model';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TournamentService } from '../../service/tournament.service';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-tournament',
@@ -17,7 +17,7 @@ export class TournamentComponent implements OnInit {
   formTournament: FormGroup = new FormGroup({});
   isUpdate: boolean = false;
 
-  constructor(private tournamentService: TournamentService) {  }
+  constructor(private tournamentService: TournamentService, private router: Router) {  }
 
   ngOnInit(): void {
     this.list();
@@ -81,6 +81,10 @@ export class TournamentComponent implements OnInit {
         }
       }
     );
+  }
+
+  detail(id: string){
+    this.router.navigate(['/tournamentDetail', id]);
   }
 
   delete(id: string){

@@ -8,7 +8,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequestMapping("/")
-@CrossOrigin(origins = "http://localhost:4200")
 public class HomeController {
   @GetMapping
   public String home() {
