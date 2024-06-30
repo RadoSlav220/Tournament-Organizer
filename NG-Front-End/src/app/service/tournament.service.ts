@@ -10,7 +10,7 @@ export class TournamentService {
   private apiUrl;
 
   constructor(private httpClient: HttpClient) {
-    this.apiUrl = 'http://localhost:8081/knockOutTournament';
+    this.apiUrl = 'http://localhost:8081/knockOutTournaments';
   }
 
   getTournaments(): Observable<TournamentModel[]>{
