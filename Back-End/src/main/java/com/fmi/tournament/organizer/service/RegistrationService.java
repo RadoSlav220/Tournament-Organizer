@@ -4,6 +4,7 @@ import com.fmi.tournament.organizer.exception.*;
 import com.fmi.tournament.organizer.model.*;
 import com.fmi.tournament.organizer.repository.ParticipantRepository;
 import com.fmi.tournament.organizer.repository.TournamentRepository;
+import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,28 @@ public class RegistrationService {
     public RegistrationService(TournamentRepository tournamentRepository, ParticipantRepository participantRepository) {
         this.tournamentRepository = tournamentRepository;
         this.participantRepository = participantRepository;
+    }
+
+  public List<Tournament> tournamentForRegistration(UUID participantID){
+    Participant participant = this.participantRepository.findById(participantID).orElseThrow();
+
+    return tournamentRepository
+        .findAll()
+        .stream()
+        .filter(tournament -> tournament.getState() == TournamentState.REGISTRATION &&
+            !tournament.getParticipants().contains(participant) &&
+            tournament.getCategory() == participant.getCategory() &&
+            tournament.getSportType() == participant.getSportType() &&
+            tournament.getParticipants().size() < tournament.getCapacity())
+        .toList();
+  }
+
+    public List<Tournament> tournamentForUnregistration(UUID participantID){
+        return participantRepository.findById(participantID)
+                .orElseThrow()
+                .getTournaments()
+                .stream().filter(t -> t.getState() == TournamentState.REGISTRATION)
+                .toList();
     }
 
     public void register(UserDetails userDetails, UUID tournamentID){

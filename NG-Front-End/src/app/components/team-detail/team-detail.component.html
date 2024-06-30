@@ -1,0 +1,119 @@
+<nav class="navbar" style="background-color: #198755;">
+    <div class="container-fluid">
+      <div class="col-md">
+          <h1 style="color: white;">Tournament Organizer</h1>
+        </div>
+    </div> 
+</nav> 
+
+<div class="col-md-12 p-2">
+    <div>
+        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal"><div class="fa fa-save" (click)="openUpdateModal()">Edit</div></button>
+        &nbsp;
+        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#registerModal"><div class="fa fa-save" (click)="openRegistrationModal()">Register in tournament</div></button>
+        &nbsp;
+        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#registerModal"><div class="fa fa-save" (click)="openUnregistrationModal()">Unregister in tournament</div></button>
+    </div>
+    
+    <div class="container row">
+        <label>Name: {{team.name}}</label>
+        <label>Sport Type: {{team.sportType}}</label>
+        <label>Category: {{team.category}}</label>
+        <label>Manager: {{team.manager}}</label>
+        <label>Establishment Year: {{team.establishmentYear}}</label>
+        <label>Players: {{team.players}}</label>
+    </div>
+</div>
+
+<!-- TODO: Modals -->
+<!--<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">Update Athlete</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="formAthlete">
+            <div class="mb-3 row">
+              <label for="name" class="col-sm-2 col-form-label">Name</label>
+              <div class="col-sm-10">
+                <input type="text" id="name" class="form-control" formControlName="name">
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label for="age" class="col-sm-2 col-form-label">Age</label>
+              <div class="col-sm-10">
+                <input type="number" id="age" class="form-control" formControlName="age">
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label for="height" class="col-sm-2 col-form-label">Height</label>
+              <div class="col-sm-10">
+                <input type="number" id="height" class="form-control" formControlName="height">
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label for="weight" class="col-sm-2 col-form-label">Weight</label>
+              <div class="col-sm-10">
+                <input type="number" id="weight" class="form-control" formControlName="weight">
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label for="sportType" class="col-sm-2 col-form-label">Sport Type</label>
+              <div class="col-sm-10">
+                <select id="sportType" class="form-control" formControlName="sportType">
+                    <option value="FOOTBALL">Football</option>
+                    <option value="VOLLEYBALL">Volleyball</option>
+                    <option value="TENNIS">Tennis</option>
+                    <option value="TABLE_TENNIS">Table tennis</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label for="category" class="col-sm-2 col-form-label">Category</label>
+              <div class="col-sm-10">
+                <select id="category" class="form-control" formControlName="category">
+                    <option value="Amateur">Amateur</option>
+                    <option value="Professional">Professional</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-warning btn-sm" (click)="update()">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>-->
+
+  <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+               <h1 *ngIf="isRegistration" class="modal-title fs-5">Registration in tournament</h1>
+               <h1 *ngIf="!isRegistration" class="modal-title fs-5">Unregistration in tournament</h1>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formRegistration">
+                    <div class="mb-3 row">
+                        <label for="tournament" class="col-sm-2 col-form-label">Tournament</label>
+                        <div class="col-sm-10">
+                          <select id="tournament" class="form-control" formControlName="tournament">
+                              <option *ngFor="let tournament of tournaments" value="{{tournament.id}}">{{tournament.name}}</option>
+                          </select>
+                        </div>
+                      </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <button *ngIf="isRegistration" type="button" class="btn btn-warning btn-sm" (click)="register()">Register</button>
+                <button *ngIf="!isRegistration" type="button" class="btn btn-warning btn-sm" (click)="unregister()">Unregister</button>
+              </div>
+        </div>
+    </div>
+  </div>
