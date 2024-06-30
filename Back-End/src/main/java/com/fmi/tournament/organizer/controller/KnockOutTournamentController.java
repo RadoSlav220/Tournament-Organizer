@@ -2,6 +2,7 @@ package com.fmi.tournament.organizer.controller;
 
 import com.fmi.tournament.organizer.dto.KnockOutTournamentCreateDTO;
 import com.fmi.tournament.organizer.dto.KnockOutTournamentResponseDTO;
+import com.fmi.tournament.organizer.dto.MatchResponseDTO;
 import com.fmi.tournament.organizer.dto.ScoreDTO;
 import com.fmi.tournament.organizer.service.KnockOutTournamentService;
 import jakarta.validation.Valid;
@@ -53,6 +54,12 @@ public class KnockOutTournamentController {
   @GetMapping("/{tournamentId}")
   public KnockOutTournamentResponseDTO getKnockOutTournamentById(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID tournamentId) {
     return knockOutTournamentService.getKnockOutTournamentById(userDetails, tournamentId);
+  }
+
+  @PreAuthorize("hasAuthority('READ_ANY_TOURNAMENT') || hasAuthority('READ_OWNED_TOURNAMENT')")
+  @GetMapping("/{tournamentId}/matches")
+  public List<MatchResponseDTO> getMatches(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID tournamentId) {
+    return knockOutTournamentService.getMatches(userDetails, tournamentId);
   }
 
   @PreAuthorize("hasAuthority('MODIFY_ANY_TOURNAMENT') || hasAuthority('MODIFY_OWNED_TOURNAMENT')")

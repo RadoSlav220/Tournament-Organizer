@@ -2,6 +2,7 @@ package com.fmi.tournament.organizer.service;
 
 import com.fmi.tournament.organizer.dto.LeagueCreateDTO;
 import com.fmi.tournament.organizer.dto.LeagueResponseDTO;
+import com.fmi.tournament.organizer.dto.MatchResponseDTO;
 import com.fmi.tournament.organizer.exception.ForbiddenActionException;
 import com.fmi.tournament.organizer.exception.IllegalActionException;
 import com.fmi.tournament.organizer.exception.InvalidTournamentCapacityException;
@@ -17,9 +18,11 @@ import com.fmi.tournament.organizer.security.model.Permission;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -84,6 +87,20 @@ public class LeagueService {
     return toResponseDto(foundLeague);
   }
 
+  public List<MatchResponseDTO> getMatches(UserDetails userDetails, UUID leagueId) {
+    League foundLeague = leagueRepository.findById(leagueId)
+        .orElseThrow(() -> new NoSuchElementException(LEAGUE_NOT_FOUND_ERROR_MESSAGE.formatted(leagueId)));
+
+    if (!tournamentAccessChecker.isTournamentAccessibleForReading(userDetails, foundLeague)) {
+      throw new ForbiddenActionException(FORBIDDEN_ACTION_ERROR_MESSAGE.formatted(leagueId));
+    }
+
+    Map<UUID, String> idToParticipantNameMap =
+        foundLeague.getParticipants().stream().collect(Collectors.toMap(Participant::getId, Participant::getName));
+
+    return foundLeague.getMatches().stream().map(match -> toMatchResponseDTO(match, idToParticipantNameMap)).toList();
+  }
+
   public LeagueResponseDTO updateLeagueById(UserDetails userDetails, UUID leagueId, LeagueCreateDTO updatedLeague) {
     League currentLeague =
         leagueRepository.findById(leagueId).orElseThrow(() -> new NoSuchElementException(LEAGUE_NOT_FOUND_ERROR_MESSAGE.formatted(leagueId)));
@@ -142,6 +159,16 @@ public class LeagueService {
         league.getParticipants().stream().map(Participant::getId).toList(),
         league.getMatches().stream().map(Match::getId).toList(),
         league.getResults());
+  }
+
+  private MatchResponseDTO toMatchResponseDTO(Match match, Map<UUID, String> idToParticipantNameMap) {
+    return new MatchResponseDTO(match.getId(),
+        match.getTime(),
+        idToParticipantNameMap.get(match.getHomeParticipantID()),
+        idToParticipantNameMap.get(match.getAwayParticipantID()),
+        match.getState(),
+        match.getHomeResult(),
+        match.getAwayResult());
   }
 
   private League updateLeagueDetails(LeagueCreateDTO updatedLeague, League currentLeague) {

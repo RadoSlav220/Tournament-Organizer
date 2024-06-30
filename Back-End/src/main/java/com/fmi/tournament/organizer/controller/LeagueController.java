@@ -2,6 +2,7 @@ package com.fmi.tournament.organizer.controller;
 
 import com.fmi.tournament.organizer.dto.LeagueCreateDTO;
 import com.fmi.tournament.organizer.dto.LeagueResponseDTO;
+import com.fmi.tournament.organizer.dto.MatchResponseDTO;
 import com.fmi.tournament.organizer.dto.ScoreDTO;
 import com.fmi.tournament.organizer.service.LeagueService;
 import jakarta.validation.Valid;
@@ -53,6 +54,12 @@ public class LeagueController {
   @GetMapping("/{leagueId}")
   public LeagueResponseDTO getLeagueById(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID leagueId) {
     return leagueService.getLeagueById(userDetails, leagueId);
+  }
+
+  @PreAuthorize("hasAuthority('READ_ANY_TOURNAMENT') || hasAuthority('READ_OWNED_TOURNAMENT')")
+  @GetMapping("/{leagueId}/matches")
+  public List<MatchResponseDTO> getMatches(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID leagueId) {
+    return leagueService.getMatches(userDetails, leagueId);
   }
 
   @PreAuthorize("hasAuthority('MODIFY_ANY_TOURNAMENT') || hasAuthority('MODIFY_OWNED_TOURNAMENT')")
